@@ -52,7 +52,8 @@ fun AboutScreen() {
 
             Text(
                 modifier = Modifier,
-                text = "Esta app ofrece listas de reproducción, recomendaciones y herramientas para convertir cualquier ocasión en una fiesta inolvidable.",
+                text = "Esta app ofrece listas de reproducción, recomendaciones y herramientas " +
+                        "para convertir cualquier ocasión en una fiesta inolvidable.",
                 fontSize = 16.sp,
                 lineHeight = 22.sp,
                 textAlign = TextAlign.Center
