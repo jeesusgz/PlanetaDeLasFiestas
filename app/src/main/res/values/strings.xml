@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PlanetaDeLasFiestas</string>
+    <string name="default_content_descrip">Imagen sin descripcion.</string>
 </resources>
