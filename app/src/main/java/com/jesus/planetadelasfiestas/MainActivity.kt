@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.jesus.planetadelasfiestas.ui.theme.PlanetaDeLasFiestasTheme
+import com.example.compose.PlanetaDeLasFiestasTheme
 import com.jesus.planetadelasfiestas.ui.theme.about.AboutScreen
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +19,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AboutScreen()
+            PlanetaDeLasFiestasTheme {
+                AboutScreen()
+            }
         }
     }
 }
