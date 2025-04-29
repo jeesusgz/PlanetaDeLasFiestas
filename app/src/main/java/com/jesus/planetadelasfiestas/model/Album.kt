@@ -5,5 +5,6 @@ data class Album(
     val albumName: String,
     val artistName: String,
     val year: String,
-    val songCount: Int
+    val songCount: Int,
+    val description: String
 )

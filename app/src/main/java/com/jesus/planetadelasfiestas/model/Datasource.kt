@@ -10,70 +10,81 @@ object Datasource {
                 albumName = "Un Verano Sin Ti",
                 artistName = "Bad Bunny",
                 year = "2022",
-                songCount = 23
+                songCount = 23,
+                description = "Este álbum de Bad Bunny es una explosión de ritmos caribeños y reggaetón, capturando la esencia del verano y las emociones intensas que lo acompañan"
             ),
             Album(
                 imageName = "midnights",
                 albumName = "Midnights",
                 artistName = "Taylor Swift",
                 year = "2022",
-                songCount = 13
+                songCount = 13,
+                description = "En 'Midnights', Taylor Swift lleva al oyente a un viaje introspectivo durante la noche. Con letras profundamente personales y una producción pop refinada"
+
             ),
             Album(
                 imageName = "1989_taylors_version",
                 albumName = "1989 (Taylor's Version)",
                 artistName = "Taylor Swift",
                 year = "2023",
-                songCount = 21
+                songCount = 21,
+                description = "La regrabación del icónico álbum de 1989 marca un nuevo capítulo para Taylor Swift. Con una nueva visión de los éxitos de su era pop"
             ),
             Album(
                 imageName = "scorpion",
                 albumName = "Scorpion",
                 artistName = "Drake",
                 year = "2018",
-                songCount = 25
+                songCount = 25,
+                description = "Doble álbum que mezcla rap y R&B, 'Scorpion' es una obra extensa y personal de Drake. Con 25 canciones, incluye algunos de sus mayores éxitos como 'God's Plan' y 'In My Feelings'"
             ),
             Album(
                 imageName = "certified_lover_boy",
                 albumName = "Certified Lover Boy",
                 artistName = "Drake",
                 year = "2021",
-                songCount = 21
+                songCount = 21,
+                description = "En 'Certified Lover Boy', Drake combina su vulnerabilidad emocional con su típica confianza. Este álbum está lleno de colaboraciones con otros artistas populares y éxitos virales, explorando temas de amor, desamor y relaciones, con un estilo accesible y directo"
             ),
             Album(
                 imageName = "the_tortured_poets_department",
                 albumName = "THE TORTURED POETS DEPARTMENT",
                 artistName = "Taylor Swift",
                 year = "2024",
-                songCount = 16
+                songCount = 16,
+                description = "Un álbum poético y profundo que explora el amor, la pérdida y la identidad. Con una producción sobria y elegante, 'The Tortured Poets Department' es un viaje lírico en el que Taylor Swift refleja su evolución como artista y como persona, con una delicada mezcla de sentimientos y sonidos."
             ),
             Album(
                 imageName = "sos",
                 albumName = "SOS",
                 artistName = "SZA",
                 year = "2022",
-                songCount = 23
+                songCount = 23,
+                description = "En 'SOS', SZA se adentra en un viaje emocional sobre el amor propio y las relaciones. Con influencias de soul, R&B y pop"
             ),
             Album(
                 imageName = "manana_sera_bonito",
                 albumName = "MAÑANA SERÁ BONITO",
                 artistName = "Karol G",
                 year = "2023",
-                songCount = 17
+                songCount = 17,
+                description = "Karol G demuestra en 'Mañana Será Bonito' su capacidad para mezclar reggaetón, pop y baladas de manera optimista y esperanzadora"
             ),
             Album(
                 imageName = "starboy",
                 albumName = "Starboy",
                 artistName = "The Weeknd",
                 year = "2016",
-                songCount = 18
+                songCount = 18,
+                description = "es un álbum oscuro y elegante que combina elementos electrónicos y de R&B. The Weeknd lleva al oyente a través de un paisaje sonoro envolvente y melancólico, con colaboraciones estelares como Daft Punk. "
             ),
             Album(
                 imageName = "one_thing_at_a_time",
                 albumName = "One Thing At A Time",
                 artistName = "Morgan Wallen",
                 year = "2023",
-                songCount = 36
+                songCount = 36,
+                description = "Un álbum extenso que fusiona el country y el pop, 'One Thing At A Time' refleja la experiencia personal de Morgan Wallen. Con 36 canciones, el álbum explora temas de vida, amor y lecciones aprendidas a lo largo de un viaje musical que ha capturado la atención del público en todo el mundo"
             )
         ).apply { shuffle() }
     }

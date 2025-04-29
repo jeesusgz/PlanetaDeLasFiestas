@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -32,7 +34,12 @@ import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.model.Datasource.getAlbumDrawableIdByName
 
 @Composable
-fun AlbumCard(album: Album, onFavoriteClick: () -> Unit) {
+fun AlbumCard(
+    album: Album,
+    onFavoriteClick: (Album) -> Unit,
+    isFavorite: Boolean,
+    onDetailsClick: (Album) -> Unit
+) {
     val imageResId = getAlbumDrawableIdByName(album.imageName)
 
     Card(
@@ -85,16 +92,31 @@ fun AlbumCard(album: Album, onFavoriteClick: () -> Unit) {
                 }
             }
 
+            // Botón de favoritos
             IconButton(
-                onClick = {},
+                onClick = { onFavoriteClick(album) },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
+                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                     contentDescription = "Añadir a favoritos",
-                    tint = Color.Red
+                    tint = if (isFavorite) Color.Red else Color.Gray
+                )
+            }
+
+            // Botón de ver detalles
+            IconButton(
+                onClick = { onDetailsClick(album) },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = "Ver detalles",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
