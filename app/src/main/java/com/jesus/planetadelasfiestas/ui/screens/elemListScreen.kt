@@ -1,5 +1,6 @@
 package com.jesus.planetadelasfiestas.ui.screens
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,13 +22,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.model.Datasource
 import com.jesus.planetadelasfiestas.ui.components.AlbumCard
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ElemListScreen() {
+fun ElemListScreen(innerPadding: PaddingValues) {
     val albumList = Datasource.albumList()
     var favoriteAlbums by remember { mutableStateOf(mutableSetOf<String>()) }
     var selectedAlbum by remember { mutableStateOf<Album?>(null) }
@@ -44,55 +45,26 @@ fun ElemListScreen() {
         selectedAlbum = album
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = if (selectedAlbum == null) "Lista de Álbumes" else "Detalles del Álbum",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                },
-                navigationIcon = {
-                    if (selectedAlbum != null) {
-                        IconButton(onClick = { selectedAlbum = null }) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Volver",
-                                tint = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+    if (selectedAlbum != null) {
+        DetailItemScreen(
+            album = selectedAlbum!!,
+            isFavorite = favoriteAlbums.contains(selectedAlbum!!.albumName),
+            onFavoriteClick = handleFavoriteClick,
+            onBackClick = { selectedAlbum = null }
+        )
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding) // Aplica el padding aquí
+        ) {
+            items(albumList) { album ->
+                AlbumCard(
+                    album = album,
+                    onFavoriteClick = handleFavoriteClick,
+                    isFavorite = favoriteAlbums.contains(album.albumName),
+                    onDetailsClick = handleDetailsClick
                 )
-            )
-        }
-    ) { paddingValues ->
-        if (selectedAlbum != null) {
-            DetailItemScreen(
-                album = selectedAlbum!!,
-                isFavorite = favoriteAlbums.contains(selectedAlbum!!.albumName),
-                onFavoriteClick = handleFavoriteClick,
-                onBackClick = { selectedAlbum = null }
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-            ) {
-                items(albumList) { album ->
-                    AlbumCard(
-                        album = album,
-                        onFavoriteClick = handleFavoriteClick,
-                        isFavorite = favoriteAlbums.contains(album.albumName),
-                        onDetailsClick = handleDetailsClick
-                    )
-                }
             }
         }
     }

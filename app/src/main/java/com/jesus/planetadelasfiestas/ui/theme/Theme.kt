@@ -10,6 +10,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -251,9 +252,23 @@ data class ColorFamily(
     val onColorContainer: Color
 )
 
-val unspecified_scheme = ColorFamily(
-    Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
+data class CustomHeaderColors(
+    val color: Color,
+    val onColor: Color
 )
+
+data class ExtendedColorScheme(
+    val customHeader: CustomHeaderColors
+)
+
+val LocalExtendedColorScheme = staticCompositionLocalOf {
+    ExtendedColorScheme(
+        customHeader = CustomHeaderColors(
+            color = Color(0xFFB0BEC5), //Color de los titulos de las tarjetas
+            onColor = Color.White
+        )
+    )
+}
 
 @Composable
 fun PlanetaDeLasFiestasTheme(
@@ -267,7 +282,7 @@ fun PlanetaDeLasFiestasTheme(
           val context = LocalContext.current
           if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
       }
-      
+
       darkTheme -> darkScheme
       else -> lightScheme
   }

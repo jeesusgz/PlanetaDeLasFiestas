@@ -1,19 +1,30 @@
 package com.jesus.planetadelasfiestas.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.compose.LocalExtendedColorScheme
 import com.jesus.planetadelasfiestas.R
 
 @Composable
@@ -91,5 +102,49 @@ fun StandardTextComp(text: String, modifier: Modifier = Modifier, style  : andro
         modifier = modifier,
         text = text,
         style = style
+    )
+}
+
+@Composable
+fun MedHeaderComp(title: String, modifier: Modifier = Modifier) {
+    val extendedColorScheme = LocalExtendedColorScheme.current
+    Surface(
+        modifier = modifier,
+        shadowElevation = 0.dp,
+        color = extendedColorScheme.customHeader.color,
+        contentColor = extendedColorScheme.customHeader.onColor
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = title.uppercase(),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainAppBar(title: String) {
+    val extendedColorScheme = LocalExtendedColorScheme.current
+
+    TopAppBar(
+        title = {
+            Text(
+                text = title.uppercase(),
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = extendedColorScheme.customHeader.onColor
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(0xFF3F51B5) //color del fondo del topBar
+        )
     )
 }

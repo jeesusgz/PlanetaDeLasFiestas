@@ -49,75 +49,77 @@ fun AlbumCard(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp)
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Row(
+        Column {
+            MedHeaderComp(
+                title = album.albumName,
                 modifier = Modifier
-                    .padding(16.dp)
                     .fillMaxWidth()
-            ) {
-                Image(
-                    painter = painterResource(id = imageResId),
-                    contentDescription = null,
+                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+            )
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Row(
                     modifier = Modifier
-                        .size(100.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                        .padding(16.dp)
+                        .fillMaxWidth()
                 ) {
-                    Text(
-                        text = album.albumName,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold
+                    Image(
+                        painter = painterResource(id = imageResId),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(RoundedCornerShape(8.dp))
                     )
-                    Text(
-                        text = album.artistName,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = LocalContentColor.current.copy(alpha = 0.7f)
-                    )
-                    Text(
-                        text = "Año: ${album.year}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = LocalContentColor.current.copy(alpha = 0.6f)
-                    )
-                    Text(
-                        text = "${album.songCount} canciones",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = LocalContentColor.current.copy(alpha = 0.6f)
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    ) {
+                        Text(
+                            text = album.artistName,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = LocalContentColor.current.copy(alpha = 0.7f)
+                        )
+                        Text(
+                            text = "Año: ${album.year}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = LocalContentColor.current.copy(alpha = 0.6f)
+                        )
+                        Text(
+                            text = "${album.songCount} canciones",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = LocalContentColor.current.copy(alpha = 0.6f)
+                        )
+                    }
+                }
+
+                IconButton(
+                    onClick = { onFavoriteClick(album) },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        contentDescription = "Añadir a favoritos",
+                        tint = if (isFavorite) Color.Red else Color.Gray
                     )
                 }
-            }
 
-            // Botón de favoritos
-            IconButton(
-                onClick = { onFavoriteClick(album) },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-            ) {
-                Icon(
-                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                    contentDescription = "Añadir a favoritos",
-                    tint = if (isFavorite) Color.Red else Color.Gray
-                )
-            }
-
-            // Botón de ver detalles
-            IconButton(
-                onClick = { onDetailsClick(album) },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Info,
-                    contentDescription = "Ver detalles",
-                    tint = MaterialTheme.colorScheme.primary
-                )
+                IconButton(
+                    onClick = { onDetailsClick(album) },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Info,
+                        contentDescription = "Ver detalles",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
     }
