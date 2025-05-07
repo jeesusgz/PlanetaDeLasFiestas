@@ -1,47 +1,88 @@
 package com.jesus.planetadelasfiestas
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import com.example.compose.PlanetaDeLasFiestasTheme
-import com.jesus.planetadelasfiestas.ui.components.MainAppBar
-import com.jesus.planetadelasfiestas.ui.screens.ElemListScreen
+import com.jesus.planetadelasfiestas.model.Album
+import com.jesus.planetadelasfiestas.model.Datasource
+import com.jesus.planetadelasfiestas.ui.screens.AlbumListCompactScreen
+import com.jesus.planetadelasfiestas.ui.screens.AlbumListMedExpScreen
+import com.jesus.planetadelasfiestas.ui.screens.DetailItemScreen
+import com.jesus.planetadelasfiestas.utils.getWindowSizeClass
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("ContextCastToActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PlanetaDeLasFiestasTheme {
-                ElemListScreen()
+                val albums = Datasource.albumList()
+                val windowSize = getWindowSizeClass(LocalContext.current as Activity)
+
+                var selectedAlbum by remember { mutableStateOf<Album?>(null) }
+                var favoriteAlbums by remember { mutableStateOf(mutableSetOf<String>()) }
+
+                val handleDetailsClick: (Album) -> Unit = { album ->
+                    selectedAlbum = album
+                }
+
+                val handleBackClick: () -> Unit = {
+                    selectedAlbum = null
+                }
+
+                val handleFavoriteClick: (Album) -> Unit = { album ->
+                    if (favoriteAlbums.contains(album.albumName)) {
+                        favoriteAlbums.remove(album.albumName)
+                    } else {
+                        favoriteAlbums.add(album.albumName)
+                    }
+                }
+
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    if (selectedAlbum != null) {
+                        DetailItemScreen(
+                            album = selectedAlbum!!,
+                            isFavorite = favoriteAlbums.contains(selectedAlbum!!.albumName),
+                            onFavoriteClick = handleFavoriteClick,
+                            onBackClick = handleBackClick
+                        )
+                    } else {
+                        when (windowSize) {
+                            WindowWidthSizeClass.Compact -> {
+                                AlbumListCompactScreen(
+                                    albums = albums,
+                                    onFavoriteClick = handleFavoriteClick,
+                                    favoriteAlbums = favoriteAlbums,
+                                    onDetailsClick = handleDetailsClick,
+                                    modifier = Modifier.padding(innerPadding)
+                                )
+                            }
+                            else -> {
+                                AlbumListMedExpScreen(
+                                    albums = albums,
+                                    onFavoriteClick = handleFavoriteClick,
+                                    favoriteAlbums = favoriteAlbums,
+                                    onDetailsClick = handleDetailsClick,
+                                    modifier = Modifier.padding(innerPadding)
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
-    }
-}
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PlanetaDeLasFiestasTheme(
-        dynamicColor = false
-    ) {
-        Greeting("Android")
     }
 }
