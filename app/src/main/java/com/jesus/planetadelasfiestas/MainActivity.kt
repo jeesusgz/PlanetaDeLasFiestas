@@ -21,15 +21,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PlanetaDeLasFiestasTheme {
-                Scaffold(
-                    topBar = { MainAppBar(title = "Lista de Álbumes") }
-                ) { innerPadding ->
-                    ElemListScreen(innerPadding = innerPadding)
-                }
+                ElemListScreen()
             }
         }
     }
 }
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

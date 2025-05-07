@@ -46,88 +46,82 @@ fun DetailItemScreen(
     onFavoriteClick: (Album) -> Unit,
     onBackClick: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Detalles del Álbum",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Volver"
-                        )
-                    }
-                }
-            )
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                val imageResId = Datasource.getAlbumDrawableIdByName(album.imageName)
-
-                Image(
-                    painter = painterResource(id = imageResId),
-                    contentDescription = album.albumName,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .padding(16.dp)
-                )
-
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        TopAppBar(
+            title = {
                 Text(
-                    text = album.albumName,
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    text = "Detalles del Álbum",
+                    style = MaterialTheme.typography.titleLarge
                 )
-
-                Text(
-                    text = "Artista: ${album.artistName}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                )
-
-                Text(
-                    text = "Año: ${album.year}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                )
-
-                Text(
-                    text = "${album.songCount} Canciones",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                )
-
-                Text(
-                    text = album.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                )
-
-                // Botón de favorito
-                IconButton(
-                    onClick = { onFavoriteClick(album) },
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(16.dp)
-                ) {
+            },
+            navigationIcon = {
+                IconButton(onClick = onBackClick) {
                     Icon(
-                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorito",
-                        tint = if (isFavorite) Color.Red else Color.Gray
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Volver"
                     )
                 }
             }
+        )
+
+        val imageResId = Datasource.getAlbumDrawableIdByName(album.imageName)
+
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = album.albumName,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .padding(16.dp)
+        )
+
+        Text(
+            text = album.albumName,
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        Text(
+            text = "Artista: ${album.artistName}",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+        )
+
+        Text(
+            text = "Año: ${album.year}",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+        )
+
+        Text(
+            text = "${album.songCount} Canciones",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+        )
+
+        Text(
+            text = album.description,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+        )
+
+        // Botón de favorito
+        IconButton(
+            onClick = { onFavoriteClick(album) },
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                contentDescription = "Favorito",
+                tint = if (isFavorite) Color.Red else Color.Gray
+            )
         }
-    )
+    }
 }

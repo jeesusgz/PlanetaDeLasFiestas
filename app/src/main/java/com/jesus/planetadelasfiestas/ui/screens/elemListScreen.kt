@@ -27,8 +27,9 @@ import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.model.Datasource
 import com.jesus.planetadelasfiestas.ui.components.AlbumCard
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ElemListScreen(innerPadding: PaddingValues) {
+fun ElemListScreen() {
     val albumList = Datasource.albumList()
     var favoriteAlbums by remember { mutableStateOf(mutableSetOf<String>()) }
     var selectedAlbum by remember { mutableStateOf<Album?>(null) }
@@ -45,26 +46,49 @@ fun ElemListScreen(innerPadding: PaddingValues) {
         selectedAlbum = album
     }
 
-    if (selectedAlbum != null) {
-        DetailItemScreen(
-            album = selectedAlbum!!,
-            isFavorite = favoriteAlbums.contains(selectedAlbum!!.albumName),
-            onFavoriteClick = handleFavoriteClick,
-            onBackClick = { selectedAlbum = null }
-        )
-    } else {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding) // Aplica el padding aquí
-        ) {
-            items(albumList) { album ->
-                AlbumCard(
-                    album = album,
-                    onFavoriteClick = handleFavoriteClick,
-                    isFavorite = favoriteAlbums.contains(album.albumName),
-                    onDetailsClick = handleDetailsClick
+    val handleBackClick: () -> Unit = {
+        selectedAlbum = null
+    }
+
+    Scaffold(
+        topBar = {
+            if (selectedAlbum == null) {
+                TopAppBar(
+                    title = { Text("Lista de Álbumes") }
                 )
+            } else {
+                TopAppBar(
+                    title = { Text("Detalles del Álbum") },
+                    navigationIcon = {
+                        IconButton(onClick = handleBackClick) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        }
+                    }
+                )
+            }
+        }
+    ) { innerPadding ->
+        if (selectedAlbum != null) {
+            DetailItemScreen(
+                album = selectedAlbum!!,
+                isFavorite = favoriteAlbums.contains(selectedAlbum!!.albumName),
+                onFavoriteClick = handleFavoriteClick,
+                onBackClick = handleBackClick
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                items(albumList) { album ->
+                    AlbumCard(
+                        album = album,
+                        onFavoriteClick = handleFavoriteClick,
+                        isFavorite = favoriteAlbums.contains(album.albumName),
+                        onDetailsClick = handleDetailsClick
+                    )
+                }
             }
         }
     }
