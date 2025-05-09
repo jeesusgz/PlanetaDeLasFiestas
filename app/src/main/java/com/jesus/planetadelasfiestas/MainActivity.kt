@@ -30,8 +30,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PlanetaDeLasFiestasTheme {
                 val albums = Datasource.albumList()
-                val windowSize = getWindowSizeClass(LocalContext.current as Activity)
-
+                val windowSizeClass = getWindowSizeClass(this)
                 var selectedAlbum by remember { mutableStateOf<Album?>(null) }
                 var favoriteAlbums by remember { mutableStateOf(mutableSetOf<String>()) }
 
@@ -51,34 +50,37 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    if (selectedAlbum != null) {
+                when {
+                    selectedAlbum != null -> {
                         DetailItemScreen(
                             album = selectedAlbum!!,
                             isFavorite = favoriteAlbums.contains(selectedAlbum!!.albumName),
                             onFavoriteClick = handleFavoriteClick,
                             onBackClick = handleBackClick
                         )
-                    } else {
-                        when (windowSize) {
-                            WindowWidthSizeClass.Compact -> {
-                                AlbumListCompactScreen(
-                                    albums = albums,
-                                    onFavoriteClick = handleFavoriteClick,
-                                    favoriteAlbums = favoriteAlbums,
-                                    onDetailsClick = handleDetailsClick,
-                                    modifier = Modifier.padding(innerPadding)
-                                )
-                            }
-                            else -> {
-                                AlbumListMedExpScreen(
-                                    albums = albums,
-                                    onFavoriteClick = handleFavoriteClick,
-                                    favoriteAlbums = favoriteAlbums,
-                                    onDetailsClick = handleDetailsClick,
-                                    modifier = Modifier.padding(innerPadding)
-                                )
-                            }
+                    }
+
+                    windowSizeClass == WindowWidthSizeClass.Compact -> {
+                        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                            AlbumListCompactScreen(
+                                albums = albums,
+                                onFavoriteClick = handleFavoriteClick,
+                                favoriteAlbums = favoriteAlbums,
+                                onDetailsClick = handleDetailsClick,
+                                modifier = Modifier.padding(innerPadding)
+                            )
+                        }
+                    }
+
+                    windowSizeClass == WindowWidthSizeClass.Medium || windowSizeClass == WindowWidthSizeClass.Expanded -> {
+                        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                            AlbumListMedExpScreen(
+                                albums = albums,
+                                onFavoriteClick = handleFavoriteClick,
+                                favoriteAlbums = favoriteAlbums,
+                                onDetailsClick = handleDetailsClick,
+                                modifier = Modifier.padding(innerPadding)
+                            )
                         }
                     }
                 }

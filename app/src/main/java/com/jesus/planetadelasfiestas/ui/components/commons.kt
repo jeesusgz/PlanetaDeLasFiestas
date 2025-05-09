@@ -27,13 +27,17 @@ import com.example.compose.LocalExtendedColorScheme
 import com.jesus.planetadelasfiestas.R
 
 @Composable
-fun StandardInputTextComp(label: String, value: String, modifier: Modifier = Modifier, onValueChange: (String) -> Unit = {}) {
+fun StandardInputTextComp(
+    label: String,
+    text: String,
+    modifier: Modifier = Modifier,
+    onValueChange: (String) -> Unit
+) {
     OutlinedTextField(
-        modifier = modifier,
-        singleLine = true,
-        value = value,
-        onValueChange = { onValueChange(it) },
-        label = { Text(text = label) }
+        value = text,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        modifier = modifier.fillMaxWidth()
     )
 }
 
@@ -72,18 +76,15 @@ fun ImageComp(
 
 @Composable
 fun StandardButtonComp(
-    label: String,
+    text: String,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit
 ) {
     Button(
-        modifier = modifier
-            .padding(8.dp),
         onClick = onClick,
-        enabled = enabled
+        modifier = modifier.fillMaxWidth()
     ) {
-        Text(text = label)
+        Text(text)
     }
 }
 

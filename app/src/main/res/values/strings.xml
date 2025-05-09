@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">PlanetaDeLasFiestas</string>
     <string name="default_content_descrip">Imagen sin descripcion.</string>
+    <string name="profile_title">Perfil</string>
+    <string name="profile_name">Nombre de perfil</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="logout">Cerrar sesión</string>
 </resources>
