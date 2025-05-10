@@ -51,11 +51,10 @@ fun ImageComp(
     width: Int = 0
 ) {
     val contentDescription =
-        if (contentDesc == "")
-            stringResource(id = R.string.default_content_descrip)
-        else
-            contentDesc
-    if(height != 0 && width != 0) {
+        if (contentDesc == "") stringResource(id = R.string.default_content_descrip)
+        else contentDesc
+
+    if (height != 0 && width != 0) {
         Image(
             painter = painterResource(id = drawable),
             contentDescription = contentDescription,

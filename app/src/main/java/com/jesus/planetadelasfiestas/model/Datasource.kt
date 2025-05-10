@@ -3,6 +3,7 @@ package com.jesus.planetadelasfiestas.model
 import com.jesus.planetadelasfiestas.R
 
 object Datasource {
+
     val albumList: () -> MutableList<Album> = {
         mutableListOf(
             Album(
@@ -20,7 +21,6 @@ object Datasource {
                 year = "2022",
                 songCount = 13,
                 description = "En 'Midnights', Taylor Swift lleva al oyente a un viaje introspectivo durante la noche. Con letras profundamente personales y una producción pop refinada"
-
             ),
             Album(
                 imageName = "1989_taylors_version",
@@ -122,5 +122,14 @@ object Datasource {
             "one_thing_at_a_time" -> R.drawable.one_thing_at_a_time
             else -> R.drawable.ic_launcher
         }
+    }
+
+    val iconDescriptions: Map<String, Int> = mapOf(
+        "delete" to R.string.delete_desc,
+        "more" to R.string.more_content_desc
+    )
+
+    fun getIconDescriptionByKey(key: String): Int {
+        return iconDescriptions[key] ?: R.string.default_content_descrip
     }
 }

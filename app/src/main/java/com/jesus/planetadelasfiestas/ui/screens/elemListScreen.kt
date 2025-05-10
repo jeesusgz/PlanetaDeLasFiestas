@@ -25,6 +25,7 @@ import com.example.compose.PlanetaDeLasFiestasTheme
 import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.model.Datasource
 import com.jesus.planetadelasfiestas.ui.components.AlbumCard
+import com.jesus.planetadelasfiestas.ui.components.AlbumCardLand
 import com.jesus.planetadelasfiestas.utils.getWindowSizeClass
 
 @SuppressLint("ContextCastToActivity")
@@ -124,7 +125,7 @@ fun AlbumListMedExpScreen(
         TopAppBar(title = { Text("Pantalla media o grande") })
         LazyColumn(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
             items(albums) { album ->
-                AlbumCard(
+                AlbumCardLand(
                     album = album,
                     onFavoriteClick = onFavoriteClick,
                     isFavorite = favoriteAlbums.contains(album.albumName),

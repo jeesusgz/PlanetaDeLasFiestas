@@ -5,4 +5,11 @@
     <string name="profile_name">Nombre de perfil</string>
     <string name="login">Iniciar sesión</string>
     <string name="logout">Cerrar sesión</string>
+    <string name="delete_desc">Eliminar de favoritos</string>
+    <string name="more_content_desc">Ver más información</string>
+    <string name="artist">Artista: %1$s</string>
+    <string name="year">Año: %1$s</string>
+    <string name="album_description">Descripción: %1$s</string>
+    <string name="fav_album_list">Álbumes favoritos</string>
+    <string name="favorite_desc">Añadir o quitar de favoritos</string>
 </resources>

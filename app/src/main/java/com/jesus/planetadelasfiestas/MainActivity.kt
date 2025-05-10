@@ -24,11 +24,12 @@ import com.jesus.planetadelasfiestas.ui.screens.DetailItemScreen
 import com.jesus.planetadelasfiestas.utils.getWindowSizeClass
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("ContextCastToActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PlanetaDeLasFiestasTheme {
+            PlanetaDeLasFiestasTheme(
+                dynamicColor = false
+            ) {
                 val albums = Datasource.albumList()
                 val windowSizeClass = getWindowSizeClass(this)
                 var selectedAlbum by remember { mutableStateOf<Album?>(null) }
