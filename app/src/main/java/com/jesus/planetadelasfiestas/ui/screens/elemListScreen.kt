@@ -64,7 +64,7 @@ fun AlbumListMedExpScreen(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        MedHeaderComp(title = stringResource(id = R.string.album_list))
+        MedHeaderComp(title = stringResource(id = R.string.album_list_Extend))
         LazyColumn(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
             items(albums) { album ->
                 AlbumCardLand(
