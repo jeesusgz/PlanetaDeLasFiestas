@@ -36,6 +36,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.jesus.planetadelasfiestas.ui.theme.about.AboutScreen
 import kotlinx.coroutines.flow.map
 
 class MainActivity : ComponentActivity() {
@@ -155,6 +156,10 @@ fun PlanetaDeLasFiestasApp(
 
             composable(Routes.Profile) {
                 ProfileCompactScreen()
+            }
+
+            composable(Routes.About) {
+                AboutScreen()
             }
 
             composable("album_detail/{albumName}") { backStackEntry ->

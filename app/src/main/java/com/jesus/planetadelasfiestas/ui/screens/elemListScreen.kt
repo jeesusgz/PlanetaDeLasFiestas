@@ -31,66 +31,6 @@ import com.jesus.planetadelasfiestas.ui.components.AlbumCardLand
 import com.jesus.planetadelasfiestas.ui.components.MedHeaderComp
 import com.jesus.planetadelasfiestas.utils.getWindowSizeClass
 
-@SuppressLint("ContextCastToActivity")
-@Composable
-fun ElemListApp() {
-    val albums = Datasource.albumList()
-    val windowSize = getWindowSizeClass(LocalContext.current as Activity)
-    var favoriteAlbums by remember { mutableStateOf(mutableSetOf<String>()) }
-    var selectedAlbum by remember { mutableStateOf<Album?>(null) }
-
-
-    val handleFavoriteClick: (Album) -> Unit = { album ->
-        if (favoriteAlbums.contains(album.albumName)) {
-            favoriteAlbums.remove(album.albumName)
-        } else {
-            favoriteAlbums.add(album.albumName)
-        }
-    }
-
-    val handleDetailsClick: (Album) -> Unit = { album ->
-        selectedAlbum = album
-    }
-
-    val handleBackClick: () -> Unit = {
-        selectedAlbum = null
-    }
-
-    PlanetaDeLasFiestasTheme {
-        Scaffold { innerPadding ->
-            if (selectedAlbum != null) {
-                DetailItemScreen(
-                    album = selectedAlbum!!,
-                    isFavorite = favoriteAlbums.contains(selectedAlbum!!.albumName),
-                    onFavoriteClick = handleFavoriteClick,
-                    onBackClick = handleBackClick
-                )
-            } else {
-                when (windowSize) {
-                    WindowWidthSizeClass.Compact -> {
-                        AlbumListCompactScreen(
-                            albums = albums,
-                            onFavoriteClick = handleFavoriteClick,
-                            favoriteAlbums = favoriteAlbums,
-                            onDetailsClick = handleDetailsClick,
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                    }
-                    else -> {
-                        AlbumListMedExpScreen(
-                            albums = albums,
-                            onFavoriteClick = handleFavoriteClick,
-                            favoriteAlbums = favoriteAlbums,
-                            onDetailsClick = handleDetailsClick,
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
 @Composable
 fun AlbumListCompactScreen(
     albums: List<Album>,

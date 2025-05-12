@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Info
 
 @Composable
 fun BottomNavigationBar(navController: NavController, currentRoute: String?) {
@@ -19,7 +20,8 @@ fun BottomNavigationBar(navController: NavController, currentRoute: String?) {
         val items = listOf(
             BottomNavItem("album_list", Icons.Filled.Home, "Álbumes"),
             BottomNavItem("fav_list", Icons.Filled.Favorite, "Favoritos"),
-            BottomNavItem("profile", Icons.Filled.AccountCircle, "Perfil")
+            BottomNavItem("profile", Icons.Filled.AccountCircle, "Perfil"),
+            BottomNavItem("about", Icons.Filled.Info, "Acerca")
         )
         // Iterar sobre los items y crear cada NavigationBarItem
         items.forEach { item ->

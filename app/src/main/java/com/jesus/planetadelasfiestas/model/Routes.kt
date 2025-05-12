@@ -6,6 +6,7 @@ object Routes {
     const val Profile = "profile"
     const val albumDetail = "album_detail"
     const val albumDetailRoute = "$albumDetail/{albumName}"
+    const val About = "about"
 
     fun albumDetailRoute(albumName: String): String {
         return "$albumDetail/$albumName"

@@ -40,8 +40,6 @@ fun FavListCompactScreen(
     }
 }
 
-
-
 @Composable
 fun FavListMedExpScreen(
     albums: List<Album>,
