@@ -61,7 +61,8 @@ fun AlbumCard(
     onFavoriteClick: (Album) -> Unit,
     isFavorite: Boolean,
     onDetailsClick: (Album) -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onDeleteClick: (Album) -> Unit
 ) {
     val imageResId = getAlbumDrawableIdByName(album.imageName)
 
@@ -116,6 +117,7 @@ fun AlbumCard(
                     }
                 }
 
+                // Botón de favorito
                 IconButton(
                     onClick = { onFavoriteClick(album) },
                     modifier = Modifier
@@ -129,6 +131,7 @@ fun AlbumCard(
                     )
                 }
 
+                // Botón de detalles
                 IconButton(
                     onClick = { onDetailsClick(album) },
                     modifier = Modifier
@@ -141,6 +144,22 @@ fun AlbumCard(
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
+
+                // Botón de eliminar (solo si es favorito)
+                if (isFavorite) {
+                    IconButton(
+                        onClick = { onDeleteClick(album) },
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = stringResource(R.string.delete_desc),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
         }
     }
@@ -152,7 +171,8 @@ fun AlbumCardLand(
     onFavoriteClick: (Album) -> Unit,
     isFavorite: Boolean,
     onDetailsClick: (Album) -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onDeleteClick: (Album) -> Unit
 ) {
     val imageResId = getAlbumDrawableIdByName(album.imageName)
 
@@ -231,6 +251,21 @@ fun AlbumCardLand(
                         contentDescription = "Ver detalles",
                         tint = MaterialTheme.colorScheme.primary
                     )
+                }
+
+                if (isFavorite) {
+                    IconButton(
+                        onClick = { onDeleteClick(album) },
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = stringResource(R.string.delete_desc),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
         }

@@ -17,4 +17,5 @@
     <string name="album_detail">Detalles del Álbum</string>
     <string name="back">Volver</string>
     <string name="album_list_Extend">Pantalla Media o Grande</string>
+    <string name="fav_list_title">Álbumes favoritos</string>
 </resources>

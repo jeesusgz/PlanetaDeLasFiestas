@@ -28,6 +28,7 @@ import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.model.Datasource
 import com.jesus.planetadelasfiestas.ui.components.AlbumCard
 import com.jesus.planetadelasfiestas.ui.components.AlbumCardLand
+import com.jesus.planetadelasfiestas.ui.components.ConfirmDeleteDialog
 import com.jesus.planetadelasfiestas.ui.components.MedHeaderComp
 import com.jesus.planetadelasfiestas.utils.getWindowSizeClass
 
@@ -39,16 +40,45 @@ fun AlbumListCompactScreen(
     onDetailsClick: (Album) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedAlbum by remember { mutableStateOf<Album?>(null) }
+
+    if (showDialog && selectedAlbum != null) {
+        ConfirmDeleteDialog(
+            albumName = selectedAlbum!!.albumName,
+            onCancel = { showDialog = false },
+            onConfirm = {
+                onFavoriteClick(selectedAlbum!!)
+                showDialog = false
+            }
+        )
+    }
+
     Column(modifier = modifier.fillMaxSize()) {
         MedHeaderComp(title = stringResource(id = R.string.album_list))
-        LazyColumn(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
             items(albums) { album ->
                 AlbumCard(
                     album = album,
                     isFavorite = favoriteAlbums.contains(album.albumName),
-                    onFavoriteClick = onFavoriteClick,
+                    onFavoriteClick = {
+                        if (favoriteAlbums.contains(album.albumName)) {
+                            selectedAlbum = album
+                            showDialog = true
+                        } else {
+                            onFavoriteClick(album)
+                        }
+                    },
                     onDetailsClick = onDetailsClick,
-                    onClick = { onDetailsClick(album) }
+                    onClick = { onDetailsClick(album) },
+                    onDeleteClick = {
+                        selectedAlbum = it
+                        showDialog = true
+                    }
                 )
             }
         }
@@ -63,16 +93,45 @@ fun AlbumListMedExpScreen(
     onDetailsClick: (Album) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedAlbum by remember { mutableStateOf<Album?>(null) }
+
+    if (showDialog && selectedAlbum != null) {
+        ConfirmDeleteDialog(
+            albumName = selectedAlbum!!.albumName,
+            onCancel = { showDialog = false },
+            onConfirm = {
+                onFavoriteClick(selectedAlbum!!)
+                showDialog = false
+            }
+        )
+    }
+
     Column(modifier = modifier.fillMaxSize()) {
         MedHeaderComp(title = stringResource(id = R.string.album_list_Extend))
-        LazyColumn(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
             items(albums) { album ->
                 AlbumCardLand(
                     album = album,
                     isFavorite = favoriteAlbums.contains(album.albumName),
-                    onFavoriteClick = onFavoriteClick,
+                    onFavoriteClick = {
+                        if (favoriteAlbums.contains(album.albumName)) {
+                            selectedAlbum = album
+                            showDialog = true
+                        } else {
+                            onFavoriteClick(album)
+                        }
+                    },
                     onDetailsClick = onDetailsClick,
-                    onClick = { onDetailsClick(album) }
+                    onClick = { onDetailsClick(album) },
+                    onDeleteClick = {
+                        selectedAlbum = it
+                        showDialog = true
+                    }
                 )
             }
         }
