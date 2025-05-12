@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -42,6 +43,12 @@ fun AlbumListCompactScreen(
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedAlbum by remember { mutableStateOf<Album?>(null) }
+    var searchText by remember { mutableStateOf("") }
+
+    val filteredAlbums = albums.filter {
+        it.albumName.contains(searchText, ignoreCase = true) ||
+                it.artistName.contains(searchText, ignoreCase = true)
+    }
 
     if (showDialog && selectedAlbum != null) {
         ConfirmDeleteDialog(
@@ -56,12 +63,23 @@ fun AlbumListCompactScreen(
 
     Column(modifier = modifier.fillMaxSize()) {
         MedHeaderComp(title = stringResource(id = R.string.album_list))
+
+        // Campo de búsqueda
+        OutlinedTextField(
+            value = searchText,
+            onValueChange = { searchText = it },
+            label = { Text(stringResource(R.string.search)) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        )
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            items(albums) { album ->
+            items(filteredAlbums) { album ->
                 AlbumCard(
                     album = album,
                     isFavorite = favoriteAlbums.contains(album.albumName),
@@ -95,6 +113,12 @@ fun AlbumListMedExpScreen(
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedAlbum by remember { mutableStateOf<Album?>(null) }
+    var searchText by remember { mutableStateOf("") }
+
+    val filteredAlbums = albums.filter {
+        it.albumName.contains(searchText, ignoreCase = true) ||
+                it.artistName.contains(searchText, ignoreCase = true)
+    }
 
     if (showDialog && selectedAlbum != null) {
         ConfirmDeleteDialog(
@@ -109,12 +133,22 @@ fun AlbumListMedExpScreen(
 
     Column(modifier = modifier.fillMaxSize()) {
         MedHeaderComp(title = stringResource(id = R.string.album_list_Extend))
+
+        OutlinedTextField(
+            value = searchText,
+            onValueChange = { searchText = it },
+            label = { Text(stringResource(R.string.search)) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        )
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            items(albums) { album ->
+            items(filteredAlbums) { album ->
                 AlbumCardLand(
                     album = album,
                     isFavorite = favoriteAlbums.contains(album.albumName),
@@ -137,6 +171,5 @@ fun AlbumListMedExpScreen(
         }
     }
 }
-
 
 
