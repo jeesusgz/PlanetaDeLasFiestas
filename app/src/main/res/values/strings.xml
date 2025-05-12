@@ -12,4 +12,8 @@
     <string name="album_description">Descripción: %1$s</string>
     <string name="fav_album_list">Álbumes favoritos</string>
     <string name="favorite_desc">Añadir o quitar de favoritos</string>
+    <string name="album_list">Lista de Álbumes</string>
+    <string name="marvel_fav_list">Favoritos</string>
+    <string name="album_detail">Detalles del Álbum</string>
+    <string name="back">Volver</string>
 </resources>

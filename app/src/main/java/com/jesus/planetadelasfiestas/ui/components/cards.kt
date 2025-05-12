@@ -1,6 +1,7 @@
 package com.jesus.planetadelasfiestas.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,12 +60,15 @@ fun AlbumCard(
     album: Album,
     onFavoriteClick: (Album) -> Unit,
     isFavorite: Boolean,
-    onDetailsClick: (Album) -> Unit
+    onDetailsClick: (Album) -> Unit,
+    onClick: () -> Unit
 ) {
     val imageResId = getAlbumDrawableIdByName(album.imageName)
 
     AlbumCardBase(
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable { onClick() }
     ) { innerModifier ->
         Column {
             MedHeaderComp(
@@ -147,12 +151,15 @@ fun AlbumCardLand(
     album: Album,
     onFavoriteClick: (Album) -> Unit,
     isFavorite: Boolean,
-    onDetailsClick: (Album) -> Unit
+    onDetailsClick: (Album) -> Unit,
+    onClick: () -> Unit
 ) {
     val imageResId = getAlbumDrawableIdByName(album.imageName)
 
     AlbumCardBase(
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable { onClick() }
     ) { innerModifier ->
         Column {
             MedHeaderComp(

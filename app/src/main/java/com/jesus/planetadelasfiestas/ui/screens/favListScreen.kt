@@ -19,49 +19,47 @@ import com.jesus.planetadelasfiestas.ui.components.MedHeaderComp
 @Composable
 fun FavListCompactScreen(
     albums: List<Album>,
-    modifier: Modifier = Modifier,
+    onFavoriteClick: (Album) -> Unit,
+    favoriteAlbums: Set<String>,
     onDetailsClick: (Album) -> Unit,
-    onFavoriteClick: (Album) -> Unit
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        MedHeaderComp(stringResource(R.string.fav_album_list))
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ) {
+        MedHeaderComp(title = stringResource(id = R.string.marvel_fav_list))
+        LazyColumn(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
             items(albums) { album ->
                 AlbumCard(
                     album = album,
-                    isFavorite = true,
+                    isFavorite = favoriteAlbums.contains(album.albumName),
+                    onFavoriteClick = onFavoriteClick,
                     onDetailsClick = onDetailsClick,
-                    onFavoriteClick = onFavoriteClick
+                    onClick = { onDetailsClick(album) }
                 )
             }
         }
     }
 }
 
+
+
 @Composable
 fun FavListMedExpScreen(
     albums: List<Album>,
-    modifier: Modifier = Modifier,
+    onFavoriteClick: (Album) -> Unit,
+    favoriteAlbums: Set<String>,
     onDetailsClick: (Album) -> Unit,
-    onFavoriteClick: (Album) -> Unit
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        MedHeaderComp(stringResource(R.string.fav_album_list))
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ) {
+        MedHeaderComp(title = stringResource(id = R.string.marvel_fav_list))
+        LazyColumn(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
             items(albums) { album ->
                 AlbumCardLand(
                     album = album,
-                    isFavorite = true,
+                    isFavorite = favoriteAlbums.contains(album.albumName),
+                    onFavoriteClick = onFavoriteClick,
                     onDetailsClick = onDetailsClick,
-                    onFavoriteClick = onFavoriteClick
+                    onClick = { onDetailsClick(album) }
                 )
             }
         }

@@ -42,7 +42,9 @@ android {
 
 dependencies {
 
+    implementation("androidx.compose.material3:material3:1.2.0")
     implementation(libs.androidx.material3.window.size)
+    implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.compose.material:material-icons-extended")
     implementation ("androidx.compose.material3:material3:1.0.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.3")

@@ -20,12 +20,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.compose.PlanetaDeLasFiestasTheme
+import com.jesus.planetadelasfiestas.R
 import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.model.Datasource
 import com.jesus.planetadelasfiestas.ui.components.AlbumCard
 import com.jesus.planetadelasfiestas.ui.components.AlbumCardLand
+import com.jesus.planetadelasfiestas.ui.components.MedHeaderComp
 import com.jesus.planetadelasfiestas.utils.getWindowSizeClass
 
 @SuppressLint("ContextCastToActivity")
@@ -88,7 +91,6 @@ fun ElemListApp() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlbumListCompactScreen(
     albums: List<Album>,
@@ -98,21 +100,21 @@ fun AlbumListCompactScreen(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        TopAppBar(title = { Text("Lista de Álbumes") })
+        MedHeaderComp(title = stringResource(id = R.string.album_list))
         LazyColumn(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
             items(albums) { album ->
                 AlbumCard(
                     album = album,
-                    onFavoriteClick = onFavoriteClick,
                     isFavorite = favoriteAlbums.contains(album.albumName),
-                    onDetailsClick = onDetailsClick
+                    onFavoriteClick = onFavoriteClick,
+                    onDetailsClick = onDetailsClick,
+                    onClick = { onDetailsClick(album) }
                 )
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlbumListMedExpScreen(
     albums: List<Album>,
@@ -122,14 +124,15 @@ fun AlbumListMedExpScreen(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        TopAppBar(title = { Text("Pantalla media o grande") })
+        MedHeaderComp(title = stringResource(id = R.string.album_list))
         LazyColumn(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
             items(albums) { album ->
                 AlbumCardLand(
                     album = album,
-                    onFavoriteClick = onFavoriteClick,
                     isFavorite = favoriteAlbums.contains(album.albumName),
-                    onDetailsClick = onDetailsClick
+                    onFavoriteClick = onFavoriteClick,
+                    onDetailsClick = onDetailsClick,
+                    onClick = { onDetailsClick(album) }
                 )
             }
         }
