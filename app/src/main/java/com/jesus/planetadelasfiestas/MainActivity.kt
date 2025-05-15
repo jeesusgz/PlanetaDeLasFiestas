@@ -1,25 +1,25 @@
 package com.jesus.planetadelasfiestas
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.compose.PlanetaDeLasFiestasTheme
 import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.model.Datasource
@@ -29,38 +29,42 @@ import com.jesus.planetadelasfiestas.ui.screens.AlbumListCompactScreen
 import com.jesus.planetadelasfiestas.ui.screens.AlbumListMedExpScreen
 import com.jesus.planetadelasfiestas.ui.screens.DetailItemScreen
 import com.jesus.planetadelasfiestas.ui.screens.FavListCompactScreen
-import com.jesus.planetadelasfiestas.ui.screens.FavListMedExpScreen
 import com.jesus.planetadelasfiestas.ui.screens.ProfileCompactScreen
-import com.jesus.planetadelasfiestas.utils.getWindowSizeClass
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import com.jesus.planetadelasfiestas.ui.theme.about.AboutScreen
-import kotlinx.coroutines.flow.map
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PlanetaDeLasFiestasTheme(
-                dynamicColor = false
-            ) {
-                // Cargar los álbumes desde el DataSource
-                val albums = Datasource.albumList()
+            PlanetaDeLasFiestasTheme(dynamicColor = false) {
 
-                // Estado para los álbumes favoritos
+                // Estado de la lista de álbumes con comentarios
+                var albumsState by remember { mutableStateOf(Datasource.albumList()) }
+
+                // Estado de álbumes favoritos
                 var favoriteAlbums by remember { mutableStateOf(setOf<String>()) }
 
-                // Lógica para manejar el clic en el álbum favorito
+                // Función para añadir o quitar álbum de favoritos
                 val handleFavoriteClick: (Album) -> Unit = { album ->
                     favoriteAlbums = if (favoriteAlbums.contains(album.albumName)) {
-                        favoriteAlbums - album.albumName // Si ya está en favoritos, lo eliminamos
+                        favoriteAlbums - album.albumName
                     } else {
-                        favoriteAlbums + album.albumName // Si no está en favoritos, lo agregamos
+                        favoriteAlbums + album.albumName
                     }
                 }
 
+                // Función para añadir comentario a un álbum
+                val addComment: (String, String) -> Unit = { albumName, comment ->
+                    albumsState = albumsState.map { album ->
+                        if (album.albumName == albumName) {
+                            val newComments = album.comments.toMutableList()
+                            newComments.add(comment)
+                            album.copy(comments = newComments)
+                        } else album
+                    }.toMutableList()
+                }
+
+                // Detectar tamaño ventana para UI responsive
                 val windowSize = LocalConfiguration.current.screenWidthDp.let {
                     when {
                         it <= 600 -> WindowWidthSizeClass.Compact
@@ -69,10 +73,12 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                // Composable principal
                 PlanetaDeLasFiestasApp(
-                    albums = albums,
+                    albums = albumsState,
                     handleFavoriteClick = handleFavoriteClick,
                     favoriteAlbums = favoriteAlbums,
+                    addComment = addComment,
                     windowSize = windowSize
                 )
             }
@@ -85,16 +91,18 @@ fun PlanetaDeLasFiestasApp(
     albums: List<Album>,
     handleFavoriteClick: (Album) -> Unit,
     favoriteAlbums: Set<String>,
+    addComment: (String, String) -> Unit,
     windowSize: WindowWidthSizeClass
-
 ) {
     val navController = rememberNavController()
-    val currentRoute by navController.currentBackStackEntryFlow
-        .map { it.destination.route }
-        .collectAsState(initial = null)
 
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController = navController, currentRoute) }
+        bottomBar = {
+            BottomNavigationBar(
+                navController = navController,
+                currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+            )
+        }
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -108,10 +116,10 @@ fun PlanetaDeLasFiestasApp(
                         onFavoriteClick = handleFavoriteClick,
                         favoriteAlbums = favoriteAlbums,
                         onDetailsClick = { album ->
-                            if (album.albumName.isNotEmpty()) {
-                                navController.navigate(Routes.albumDetailRoute(album.albumName))
-                            }
-                        }
+                            navController.navigate(Routes.albumDetailRoute(album.albumName))
+                        },
+                        navController = navController,
+                        modifier = Modifier.fillMaxSize()
                     )
                 } else {
                     AlbumListMedExpScreen(
@@ -119,10 +127,10 @@ fun PlanetaDeLasFiestasApp(
                         onFavoriteClick = handleFavoriteClick,
                         favoriteAlbums = favoriteAlbums,
                         onDetailsClick = { album ->
-                            if (album.albumName.isNotEmpty()) {
-                                navController.navigate(Routes.albumDetailRoute(album.albumName))
-                            }
-                        }
+                            navController.navigate(Routes.albumDetailRoute(album.albumName))
+                        },
+                        navController = navController,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
             }
@@ -135,21 +143,21 @@ fun PlanetaDeLasFiestasApp(
                         onFavoriteClick = handleFavoriteClick,
                         favoriteAlbums = favoriteAlbums,
                         onDetailsClick = { album ->
-                            if (album.albumName.isNotEmpty()) {
-                                navController.navigate(Routes.albumDetailRoute(album.albumName))
-                            }
-                        }
+                            navController.navigate(Routes.albumDetailRoute(album.albumName))
+                        },
+                        navController = navController,
+                        modifier = Modifier.fillMaxSize()
                     )
                 } else {
-                    FavListMedExpScreen(
+                    FavListCompactScreen(
                         albums = favAlbums,
                         onFavoriteClick = handleFavoriteClick,
                         favoriteAlbums = favoriteAlbums,
                         onDetailsClick = { album ->
-                            if (album.albumName.isNotEmpty()) {
-                                navController.navigate(Routes.albumDetailRoute(album.albumName))
-                            }
-                        }
+                            navController.navigate(Routes.albumDetailRoute(album.albumName))
+                        },
+                        navController = navController,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
             }
@@ -162,24 +170,26 @@ fun PlanetaDeLasFiestasApp(
                 AboutScreen()
             }
 
-            composable("album_detail/{albumName}") { backStackEntry ->
-                val encodedName = backStackEntry.arguments?.getString("albumName")
-                val albumName = encodedName?.let { Uri.decode(it) }
+            composable(
+                route = "detail/{albumName}",
+                arguments = listOf(navArgument("albumName") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val albumName = backStackEntry.arguments?.getString("albumName")
+                val album = albums.find { it.albumName == albumName }
 
-                if (albumName.isNullOrEmpty()) {
-                    Text("Álbum no válido")
-                } else {
-                    val album = albums.find { it.albumName == albumName }
-                    if (album != null) {
-                        DetailItemScreen(
-                            album = album,
-                            isFavorite = favoriteAlbums.contains(album.albumName),
-                            onFavoriteClick = handleFavoriteClick,
-                            onBackClick = { navController.popBackStack() }
-                        )
-                    } else {
-                        Text("Álbum no encontrado")
-                    }
+                if (album != null) {
+                    // Mostrar comentarios solo si está en favoritos
+                    val showComments = favoriteAlbums.contains(album.albumName)
+
+                    DetailItemScreen(
+                        album = album,
+                        isFavorite = showComments, // o favoriteAlbums.contains(album.albumName)
+                        onFavoriteClick = { handleFavoriteClick(album) },
+                        onBackClick = { navController.popBackStack() },
+                        comments = album.comments,
+                        onAddComment = { comment -> addComment(album.albumName, comment) },
+                        showComments = showComments
+                    )
                 }
             }
         }

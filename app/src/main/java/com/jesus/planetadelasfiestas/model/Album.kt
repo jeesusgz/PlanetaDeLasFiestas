@@ -6,5 +6,6 @@ data class Album(
     val artistName: String,
     val year: String,
     val songCount: Int,
-    val description: String
+    val description: String,
+    val comments: List<String> = emptyList()
 )

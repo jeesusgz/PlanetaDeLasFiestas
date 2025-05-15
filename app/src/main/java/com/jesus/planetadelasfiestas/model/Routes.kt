@@ -1,5 +1,7 @@
 package com.jesus.planetadelasfiestas.model
 
+import android.net.Uri
+
 object Routes {
     const val AlbumList = "album_list"
     const val FavList = "fav_list"
@@ -9,6 +11,7 @@ object Routes {
     const val About = "about"
 
     fun albumDetailRoute(albumName: String): String {
-        return "$albumDetail/$albumName"
+        val encodedName = Uri.encode(albumName)  // Codifica caracteres especiales
+        return "detail/$encodedName"
     }
 }

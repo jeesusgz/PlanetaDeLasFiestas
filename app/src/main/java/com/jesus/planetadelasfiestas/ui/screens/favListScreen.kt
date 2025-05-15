@@ -14,8 +14,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.jesus.planetadelasfiestas.R
 import com.jesus.planetadelasfiestas.model.Album
+import com.jesus.planetadelasfiestas.model.Routes
 import com.jesus.planetadelasfiestas.ui.components.AlbumCard
 import com.jesus.planetadelasfiestas.ui.components.AlbumCardLand
 import com.jesus.planetadelasfiestas.ui.components.ConfirmDeleteDialog
@@ -26,7 +28,9 @@ fun FavListCompactScreen(
     albums: List<Album>,
     onFavoriteClick: (Album) -> Unit,
     favoriteAlbums: Set<String>,
-    onDetailsClick: (Album) -> Unit
+    onDetailsClick: (Album) -> Unit,
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedAlbum by remember { mutableStateOf<Album?>(null) }
@@ -42,7 +46,7 @@ fun FavListCompactScreen(
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier.fillMaxSize()) {
         MedHeaderComp(stringResource(R.string.fav_list_title))
         LazyColumn(
             modifier = Modifier
@@ -61,10 +65,12 @@ fun FavListCompactScreen(
                             onFavoriteClick(album)
                         }
                     },
-                    onDetailsClick = onDetailsClick,
+                    onDetailsClick = {
+                        navController.navigate(Routes.albumDetailRoute(it.albumName))
+                    },
                     onClick = { onDetailsClick(album) },
-                    onDeleteClick = {
-                        selectedAlbum = it
+                    onDeleteClick = { albumToDelete ->
+                        selectedAlbum = albumToDelete
                         showDialog = true
                     }
                 )
@@ -73,12 +79,15 @@ fun FavListCompactScreen(
     }
 }
 
+
 @Composable
 fun FavListMedExpScreen(
     albums: List<Album>,
     onFavoriteClick: (Album) -> Unit,
     favoriteAlbums: Set<String>,
-    onDetailsClick: (Album) -> Unit
+    onDetailsClick: (Album) -> Unit,
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedAlbum by remember { mutableStateOf<Album?>(null) }
@@ -94,7 +103,7 @@ fun FavListMedExpScreen(
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -112,10 +121,12 @@ fun FavListMedExpScreen(
                             onFavoriteClick(album)
                         }
                     },
-                    onDetailsClick = onDetailsClick,
+                    onDetailsClick = {
+                        navController.navigate(Routes.albumDetailRoute(it.albumName))
+                    },
                     onClick = { onDetailsClick(album) },
-                    onDeleteClick = {
-                        selectedAlbum = it
+                    onDeleteClick = { albumToDelete ->
+                        selectedAlbum = albumToDelete
                         showDialog = true
                     }
                 )
