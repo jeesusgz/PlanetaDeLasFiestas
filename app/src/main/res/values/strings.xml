@@ -19,4 +19,6 @@
     <string name="album_list_Extend">Pantalla Media o Grande</string>
     <string name="fav_list_title">Álbumes favoritos</string>
     <string name="search">Buscar</string>
+    <string name="save">Guardar</string>
+    <string name="profile_default_title">Perfil de usuario</string>
 </resources>
