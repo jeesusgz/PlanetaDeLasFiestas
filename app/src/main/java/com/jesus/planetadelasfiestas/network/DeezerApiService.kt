@@ -3,6 +3,7 @@ package com.jesus.planetadelasfiestas.network
 import com.jesus.planetadelasfiestas.data.dto.AlbumResponse
 import com.jesus.planetadelasfiestas.data.dto.ArtistListResponse
 import com.jesus.planetadelasfiestas.data.dto.SearchAlbumResponse
+import com.jesus.planetadelasfiestas.data.dto.TopAlbumsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -17,4 +18,7 @@ interface DeezerApiService {
 
     @GET("genre/{genre_id}/artists")
     suspend fun getArtistsByGenre(@Path("genre_id") genreId: Int): Response<ArtistListResponse>
+
+    @GET("chart/0/albums")
+    suspend fun getTopAlbums(): Response<TopAlbumsResponse>
 }

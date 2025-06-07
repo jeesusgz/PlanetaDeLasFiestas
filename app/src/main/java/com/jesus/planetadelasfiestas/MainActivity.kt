@@ -111,12 +111,6 @@ fun PlanetaDeLasFiestasApp(
             composable(Routes.AlbumList) {
                 val albums by viewModel.albums.collectAsState()
 
-                LaunchedEffect(Unit) {
-                    if (albums.isEmpty()) {
-                        viewModel.searchAlbums("reggaeton")
-                    }
-                }
-
                 if (windowSize == WindowWidthSizeClass.Compact) {
                     AlbumListCompactScreen(
                         viewModel = viewModel,

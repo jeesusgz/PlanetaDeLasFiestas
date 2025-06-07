@@ -25,4 +25,14 @@ class DeezerRepository(private val apiService: DeezerApiService) {
             throw Exception("Error obteniendo artistas por género")
         }
     }
+
+    suspend fun getTopAlbums(): List<Album> {
+        val response = apiService.getTopAlbums()  // Esto debe llamar al endpoint "chart/0/albums"
+        if (response.isSuccessful) {
+            // response.body() debe ser de tipo TopAlbumsResponse que contiene lista de álbumes en .data
+            return response.body()?.data?.map { it.toAlbum() } ?: emptyList()
+        } else {
+            throw Exception("Error al obtener top albums")
+        }
+    }
 }
