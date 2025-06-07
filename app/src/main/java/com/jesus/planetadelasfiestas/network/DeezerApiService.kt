@@ -12,5 +12,4 @@ interface DeezerApiService {
 
     @GET("album/{id}")
     suspend fun getAlbumDetails(@Path("id") albumId: String): AlbumResponse
-
 }
