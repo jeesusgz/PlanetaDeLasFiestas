@@ -39,6 +39,41 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         SharingStarted.Eagerly,
         AppTheme.SYSTEM
     )
+    private val genreMap = mapOf(
+        "pop" to 132,
+        "rock" to 152,
+        "reggaeton" to 197,
+        "rap" to 116,
+        "electro" to 106,
+        "latin" to 197
+    )
+
+    init {
+        loadAlbumsByGenre("reggaeton") // Puedes cambiarlo por "rock", "pop", etc.
+    }
+
+    fun loadAlbumsByGenre(genreName: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val genreId = genreMap[genreName.lowercase()] ?: 132 // Default a pop
+                val artistResponse = repository.getArtistsByGenre(genreId)
+                val topArtistName = artistResponse.firstOrNull()?.name
+
+                if (topArtistName != null) {
+                    val results = repository.searchAlbums(topArtistName)
+                        .sortedByDescending { it.fans } // ordenar por popularidad
+                    _albums.value = results
+                } else {
+                    _albums.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _albums.value = emptyList()
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 
     fun searchAlbums(query: String) {
         viewModelScope.launch {

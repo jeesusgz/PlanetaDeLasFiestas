@@ -14,5 +14,6 @@ data class Album(
     val duration: Int,
     val artistId: Long,
     val artistName: String,
-    val artistPicture: String
+    val artistPicture: String,
+    val fans: Int
 )

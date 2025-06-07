@@ -15,7 +15,8 @@ data class AlbumResponse(
     @SerializedName("explicit_lyrics") val explicitLyrics: Boolean,
     @SerializedName("nb_tracks") val numberOfTracks: Int,
     @SerializedName("duration") val duration: Int,
-    @SerializedName("artist") val artist: ArtistDto
+    @SerializedName("artist") val artist: ArtistDto,
+    @SerializedName("fans") val fans: Int,
 )
 
 fun AlbumResponse.toAlbum() = com.jesus.planetadelasfiestas.model.Album(
@@ -32,5 +33,6 @@ fun AlbumResponse.toAlbum() = com.jesus.planetadelasfiestas.model.Album(
     duration = duration,
     artistId = artist.id,
     artistName = artist.name,
-    artistPicture = artist.picture
+    artistPicture = artist.picture,
+    fans = fans
 )
