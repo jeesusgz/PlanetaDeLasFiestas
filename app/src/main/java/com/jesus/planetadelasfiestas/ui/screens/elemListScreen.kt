@@ -1,5 +1,6 @@
 package com.jesus.planetadelasfiestas.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,11 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -47,9 +50,24 @@ fun AlbumListCompactScreen(
     val albums by viewModel.albums.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
+    // Aquí el cambio importante: ponemos initial = null para evitar fallo al recibir null
+    val saveResult by viewModel.saveResult.observeAsState(initial = null)
+    val context = LocalContext.current
+
     LaunchedEffect(searchText) {
         if (searchText.length >= 3) {
             viewModel.searchAlbums(searchText)
+        }
+    }
+
+    saveResult?.let { success ->
+        LaunchedEffect(success) {
+            if (success) {
+                Toast.makeText(context, "Álbum guardado", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Álbum ya está guardado", Toast.LENGTH_SHORT).show()
+            }
+            viewModel.resetSaveResult()
         }
     }
 
@@ -95,7 +113,7 @@ fun AlbumListCompactScreen(
                                 selectedAlbum = album
                                 showDialog = true
                             } else {
-                                onFavoriteClick(album)
+                                viewModel.saveAlbum(album)
                             }
                         },
                         onDetailsClick = {
@@ -129,10 +147,23 @@ fun AlbumListMedExpScreen(
 
     val albums by viewModel.albums.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val saveResult by viewModel.saveResult.observeAsState(initial = null)
+    val context = LocalContext.current
 
     LaunchedEffect(searchText) {
         if (searchText.length >= 3) {
             viewModel.searchAlbums(searchText)
+        }
+    }
+
+    saveResult?.let { success ->
+        LaunchedEffect(success) {
+            if (success) {
+                Toast.makeText(context, "Álbum guardado", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Álbum ya está guardado", Toast.LENGTH_SHORT).show()
+            }
+            viewModel.resetSaveResult()
         }
     }
 
@@ -178,7 +209,7 @@ fun AlbumListMedExpScreen(
                                 selectedAlbum = album
                                 showDialog = true
                             } else {
-                                onFavoriteClick(album)
+                                viewModel.saveAlbum(album)
                             }
                         },
                         onDetailsClick = {

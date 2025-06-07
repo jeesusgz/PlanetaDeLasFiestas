@@ -5,12 +5,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted
 import androidx.lifecycle.viewModelScope
 import com.jesus.planetadelasfiestas.data.AppTheme
 import com.jesus.planetadelasfiestas.data.UserPreferences
+import com.jesus.planetadelasfiestas.data.local.AppDatabase
 import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.network.RetrofitInstance
 import com.jesus.planetadelasfiestas.repository.DeezerRepository
@@ -20,7 +23,10 @@ import kotlinx.coroutines.launch
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val prefs = UserPreferences(application)
     private val apiService = RetrofitInstance.api
-    val repository = DeezerRepository(apiService)
+    private val _saveResult = MutableLiveData<Boolean?>()
+    val saveResult: LiveData<Boolean?> = _saveResult
+    private val albumDao = AppDatabase.getInstance(application).albumDao()
+    val repository = DeezerRepository(apiService, albumDao)
 
     private val _albums = MutableStateFlow<List<Album>>(emptyList())
     val albums: StateFlow<List<Album>> = _albums
@@ -40,15 +46,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         AppTheme.SYSTEM
     )
 
-    private val genreMap = mapOf(
-        "pop" to 132,
-        "rock" to 152,
-        "reggaeton" to 197,
-        "rap" to 116,
-        "electro" to 106,
-        "latin" to 197
-    )
-
     init {
         loadTopAlbums()
     }
@@ -59,29 +56,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val topAlbums = repository.getTopAlbums()
                 _albums.value = topAlbums
-            } catch (e: Exception) {
-                _albums.value = emptyList()
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-    fun loadAlbumsByGenre(genreName: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                val genreId = genreMap[genreName.lowercase()] ?: 132 // Default a pop
-                val artistResponse = repository.getArtistsByGenre(genreId)
-                val topArtistName = artistResponse.firstOrNull()?.name
-
-                if (topArtistName != null) {
-                    val results = repository.searchAlbums(topArtistName)
-                        .sortedByDescending { it.fans }
-                    _albums.value = results
-                } else {
-                    _albums.value = emptyList()
-                }
             } catch (e: Exception) {
                 _albums.value = emptyList()
             } finally {
@@ -119,5 +93,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         updatedList.add(comment)
         currentComments[albumId] = updatedList
         _comments.value = currentComments
+    }
+
+    fun saveAlbum(album: Album) {
+        viewModelScope.launch {
+            val success = repository.saveAlbumToDb(album)  // Devuelve true si guardó, false si ya existía
+            _saveResult.postValue(success)
+        }
+    }
+
+    fun resetSaveResult() {
+        _saveResult.postValue(null)
     }
 }

@@ -3,10 +3,15 @@ package com.jesus.planetadelasfiestas.repository
 
 import com.jesus.planetadelasfiestas.data.dto.ArtistDto
 import com.jesus.planetadelasfiestas.data.dto.toAlbum
+import com.jesus.planetadelasfiestas.data.local.AlbumDao
+import com.jesus.planetadelasfiestas.data.local.AlbumEntity
 import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.network.DeezerApiService
 
-class DeezerRepository(private val apiService: DeezerApiService) {
+class DeezerRepository(
+    private val apiService: DeezerApiService,
+    private val albumDao: AlbumDao  // <-- agregamos el DAO aquí
+) {
 
     suspend fun searchAlbums(query: String): List<Album> {
         val response = apiService.searchAlbums(query)
@@ -27,12 +32,22 @@ class DeezerRepository(private val apiService: DeezerApiService) {
     }
 
     suspend fun getTopAlbums(): List<Album> {
-        val response = apiService.getTopAlbums()  // Esto debe llamar al endpoint "chart/0/albums"
+        val response = apiService.getTopAlbums()
         if (response.isSuccessful) {
-            // response.body() debe ser de tipo TopAlbumsResponse que contiene lista de álbumes en .data
             return response.body()?.data?.map { it.toAlbum() } ?: emptyList()
         } else {
             throw Exception("Error al obtener top albums")
         }
+    }
+
+    suspend fun saveAlbumToDb(album: Album): Boolean {
+        val albumEntity = AlbumEntity(
+            id = album.id,
+            title = album.title,
+            artistId = album.artistId,  // asignar artistId (Long)
+            coverUrl = album.coverUrl
+        )
+        val insertResult = albumDao.insertAlbum(albumEntity)
+        return insertResult != -1L
     }
 }

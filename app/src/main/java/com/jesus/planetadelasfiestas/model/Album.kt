@@ -1,5 +1,7 @@
 package com.jesus.planetadelasfiestas.model
 
+import com.jesus.planetadelasfiestas.data.local.AlbumEntity
+
 data class Album(
     val id: Long,
     val title: String,
@@ -16,4 +18,11 @@ data class Album(
     val artistName: String,
     val artistPicture: String,
     val fans: Int
+)
+
+fun Album.toEntity() = AlbumEntity(
+    id = id,
+    title = title,
+    artistId = artistId,
+    coverUrl = coverUrl
 )

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -41,7 +42,10 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.compose.runtime:runtime-livedata:<version_compose>")
+    implementation("androidx.room:room-runtime:2.7.1")
+    implementation("androidx.room:room-ktx:2.7.1")
+    kapt("androidx.room:room-compiler:2.7.1")
     implementation(libs.coil.compose)
     implementation(libs.retrofit2.retrofit)
     implementation(libs.converter.gson)
