@@ -1,5 +1,7 @@
 package com.jesus.planetadelasfiestas.ui.components
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,7 +19,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -31,13 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.jesus.planetadelasfiestas.R
 import com.jesus.planetadelasfiestas.model.Album
-import com.jesus.planetadelasfiestas.model.Datasource
-import com.jesus.planetadelasfiestas.model.Datasource.getAlbumDrawableIdByName
 
 @Composable
 fun AlbumCardBase(
@@ -64,16 +63,14 @@ fun AlbumCard(
     onClick: () -> Unit,
     onDeleteClick: (Album) -> Unit
 ) {
-    val imageResId = getAlbumDrawableIdByName(album.imageName)
-
     AlbumCardBase(
         modifier = Modifier
             .padding(8.dp)
             .clickable { onClick() }
-    ) { innerModifier ->
+    ) { _ ->
         Column {
             MedHeaderComp(
-                title = album.albumName,
+                title = album.title,
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
@@ -86,7 +83,7 @@ fun AlbumCard(
                         .fillMaxWidth()
                 ) {
                     Image(
-                        painter = painterResource(id = imageResId),
+                        painter = rememberAsyncImagePainter(album.coverUrl),
                         contentDescription = null,
                         modifier = Modifier
                             .size(100.dp)
@@ -105,19 +102,23 @@ fun AlbumCard(
                             color = LocalContentColor.current.copy(alpha = 0.7f)
                         )
                         Text(
-                            text = "Año: ${album.year}",
+                            text = "Lanzamiento: ${album.releaseDate}",
                             style = MaterialTheme.typography.bodySmall,
                             color = LocalContentColor.current.copy(alpha = 0.6f)
                         )
                         Text(
-                            text = "${album.songCount} canciones",
+                            text = "${album.numberOfTracks} canciones",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = LocalContentColor.current.copy(alpha = 0.6f)
+                        )
+                        Text(
+                            text = "Duración: ${formatDuration(album.duration)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = LocalContentColor.current.copy(alpha = 0.6f)
                         )
                     }
                 }
 
-                // Botón de favorito
                 IconButton(
                     onClick = { onFavoriteClick(album) },
                     modifier = Modifier
@@ -131,7 +132,6 @@ fun AlbumCard(
                     )
                 }
 
-                // Botón de detalles
                 IconButton(
                     onClick = { onDetailsClick(album) },
                     modifier = Modifier
@@ -145,7 +145,6 @@ fun AlbumCard(
                     )
                 }
 
-                // Botón de eliminar (solo si es favorito)
                 if (isFavorite) {
                     IconButton(
                         onClick = { onDeleteClick(album) },
@@ -174,16 +173,14 @@ fun AlbumCardLand(
     onClick: () -> Unit,
     onDeleteClick: (Album) -> Unit
 ) {
-    val imageResId = getAlbumDrawableIdByName(album.imageName)
-
     AlbumCardBase(
         modifier = Modifier
             .padding(8.dp)
             .clickable { onClick() }
-    ) { innerModifier ->
+    ) { _ ->
         Column {
             MedHeaderComp(
-                title = album.albumName,
+                title = album.title,
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
@@ -196,7 +193,7 @@ fun AlbumCardLand(
                         .fillMaxWidth()
                 ) {
                     Image(
-                        painter = painterResource(id = imageResId),
+                        painter = rememberAsyncImagePainter(album.coverUrl),
                         contentDescription = null,
                         modifier = Modifier
                             .size(150.dp)
@@ -215,12 +212,17 @@ fun AlbumCardLand(
                             color = LocalContentColor.current.copy(alpha = 0.7f)
                         )
                         Text(
-                            text = "Año: ${album.year}",
+                            text = "Lanzamiento: ${album.releaseDate}",
                             style = MaterialTheme.typography.bodySmall,
                             color = LocalContentColor.current.copy(alpha = 0.6f)
                         )
                         Text(
-                            text = "${album.songCount} canciones",
+                            text = "${album.numberOfTracks} canciones",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = LocalContentColor.current.copy(alpha = 0.6f)
+                        )
+                        Text(
+                            text = "Duración: ${formatDuration(album.duration)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = LocalContentColor.current.copy(alpha = 0.6f)
                         )
@@ -270,4 +272,10 @@ fun AlbumCardLand(
             }
         }
     }
+}
+
+fun formatDuration(durationInSeconds: Int): String {
+    val minutes = durationInSeconds / 60
+    val seconds = durationInSeconds % 60
+    return "%d:%02d".format(minutes, seconds)
 }

@@ -1,6 +1,9 @@
 package com.jesus.planetadelasfiestas.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -34,10 +39,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.jesus.planetadelasfiestas.model.Album
-import com.jesus.planetadelasfiestas.model.Datasource
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,9 +56,10 @@ fun DetailItemScreen(
     onBackClick: () -> Unit,
     comments: List<String>,
     onAddComment: (String) -> Unit,
-    showComments: Boolean = false
+    showComments: Boolean = true
 ) {
     var commentText by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -68,61 +76,92 @@ fun DetailItemScreen(
             },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Volver"
-                    )
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
                 }
             }
         )
 
-        val imageResId = Datasource.getAlbumDrawableIdByName(album.imageName)
-
-        Image(
-            painter = painterResource(id = imageResId),
-            contentDescription = album.albumName,
+        AsyncImage(
+            model = album.coverUrl,
+            contentDescription = album.title,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(250.dp)
-                .clip(RoundedCornerShape(16.dp))
                 .padding(16.dp)
+                .clip(RoundedCornerShape(16.dp))
         )
 
         Text(
-            text = album.albumName,
+            text = album.title,
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
+        // Imagen del artista
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+                model = album.artistPicture,
+                contentDescription = album.artistName,
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+                    .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+            )
+            Text(
+                text = album.artistName,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+
         Text(
-            text = "Artista: ${album.artistName}",
+            text = "Fecha de lanzamiento: ${album.releaseDate}",
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
         )
 
         Text(
-            text = "Año: ${album.year}",
+            text = "Número de canciones: ${album.numberOfTracks}",
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
         )
 
         Text(
-            text = "${album.songCount} Canciones",
+            text = "Duración: ${album.duration / 60}m ${album.duration % 60}s",
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
         )
 
         Text(
-            text = album.description,
+            text = "Género ID: ${album.genreId}",
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
         )
+
+        Button(
+            onClick = {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(album.link))
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+            },
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .fillMaxWidth()
+        ) {
+            Text("Ver en Deezer")
+        }
 
         IconButton(
             onClick = { onFavoriteClick(album) },
             modifier = Modifier
                 .align(Alignment.End)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
         ) {
             Icon(
                 imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,

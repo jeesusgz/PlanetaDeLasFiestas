@@ -27,7 +27,7 @@ import com.jesus.planetadelasfiestas.ui.components.MedHeaderComp
 fun FavListCompactScreen(
     albums: List<Album>,
     onFavoriteClick: (Album) -> Unit,
-    favoriteAlbums: Set<String>,
+    favoriteAlbums: Set<Long>,
     onDetailsClick: (Album) -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
@@ -37,7 +37,7 @@ fun FavListCompactScreen(
 
     if (showDialog && selectedAlbum != null) {
         ConfirmDeleteDialog(
-            albumName = selectedAlbum!!.albumName,
+            albumName = selectedAlbum!!.title,
             onCancel = { showDialog = false },
             onConfirm = {
                 onFavoriteClick(selectedAlbum!!)
@@ -56,9 +56,9 @@ fun FavListCompactScreen(
             items(albums) { album ->
                 AlbumCard(
                     album = album,
-                    isFavorite = favoriteAlbums.contains(album.albumName),
+                    isFavorite = favoriteAlbums.contains(album.id),
                     onFavoriteClick = {
-                        if (favoriteAlbums.contains(album.albumName)) {
+                        if (favoriteAlbums.contains(album.id)) {
                             selectedAlbum = album
                             showDialog = true
                         } else {
@@ -66,7 +66,7 @@ fun FavListCompactScreen(
                         }
                     },
                     onDetailsClick = {
-                        navController.navigate(Routes.albumDetailRoute(it.albumName))
+                        navController.navigate(Routes.albumDetailRoute(album.id))
                     },
                     onClick = { onDetailsClick(album) },
                     onDeleteClick = { albumToDelete ->
@@ -79,12 +79,11 @@ fun FavListCompactScreen(
     }
 }
 
-
 @Composable
 fun FavListMedExpScreen(
     albums: List<Album>,
     onFavoriteClick: (Album) -> Unit,
-    favoriteAlbums: Set<String>,
+    favoriteAlbums: Set<Long>,
     onDetailsClick: (Album) -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
@@ -94,7 +93,7 @@ fun FavListMedExpScreen(
 
     if (showDialog && selectedAlbum != null) {
         ConfirmDeleteDialog(
-            albumName = selectedAlbum!!.albumName,
+            albumName = selectedAlbum!!.title,
             onCancel = { showDialog = false },
             onConfirm = {
                 onFavoriteClick(selectedAlbum!!)
@@ -104,6 +103,7 @@ fun FavListMedExpScreen(
     }
 
     Column(modifier.fillMaxSize()) {
+        MedHeaderComp(stringResource(R.string.fav_list_title))
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -112,9 +112,9 @@ fun FavListMedExpScreen(
             items(albums) { album ->
                 AlbumCardLand(
                     album = album,
-                    isFavorite = favoriteAlbums.contains(album.albumName),
+                    isFavorite = favoriteAlbums.contains(album.id),
                     onFavoriteClick = {
-                        if (favoriteAlbums.contains(album.albumName)) {
+                        if (favoriteAlbums.contains(album.id)) {
                             selectedAlbum = album
                             showDialog = true
                         } else {
@@ -122,7 +122,7 @@ fun FavListMedExpScreen(
                         }
                     },
                     onDetailsClick = {
-                        navController.navigate(Routes.albumDetailRoute(it.albumName))
+                        navController.navigate(Routes.albumDetailRoute(album.id))
                     },
                     onClick = { onDetailsClick(album) },
                     onDeleteClick = { albumToDelete ->
