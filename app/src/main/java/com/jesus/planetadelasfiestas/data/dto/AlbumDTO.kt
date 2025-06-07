@@ -7,7 +7,8 @@ data class AlbumDto(
     @SerializedName("id") val id: Long,
     @SerializedName("title") val title: String,
     @SerializedName("cover_medium") val coverUrl: String,
-    @SerializedName("artist") val artist: ArtistDto
+    @SerializedName("artist") val artist: ArtistDto,
+    @SerializedName("nb_tracks") val numberOfTracks: Int
 )
 
 fun AlbumDto.toAlbum() = Album(
@@ -20,7 +21,7 @@ fun AlbumDto.toAlbum() = Album(
     recordType = "",
     tracklistUrl = "",
     explicitLyrics = false,
-    numberOfTracks = 0,
+    numberOfTracks = this.numberOfTracks,
     duration = 0,
     artistId = artist.id,
     artistName = artist.name,
