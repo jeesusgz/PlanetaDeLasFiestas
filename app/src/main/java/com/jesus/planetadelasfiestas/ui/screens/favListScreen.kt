@@ -61,15 +61,20 @@ fun FavListCompactScreen(
                 AlbumCard(
                     album = album,
                     isFavorite = favoriteAlbums.contains(album.id),
-                    onFavoriteClick = {
-                        onFavoriteClick(album)
+                    onFavoriteClick = { albumToToggle ->
+                        if (favoriteAlbums.contains(albumToToggle.id)) {
+                            // Si ya es favorito, mostrar el diálogo de confirmación antes de eliminar
+                            selectedAlbum = albumToToggle
+                            showDialog = true
+                        } else {
+                            // Si no es favorito, añadirlo directamente
+                            onFavoriteClick(albumToToggle)
+                        }
                     },
-                    onDetailsClick = {
-                        navController.navigate(Routes.albumDetailRoute(album.id))
-                    },
+                    onDetailsClick = { navController.navigate(Routes.albumDetailRoute(album.id)) },
                     onClick = { onDetailsClick(album) },
-                    onDeleteClick = {
-                        selectedAlbum = it
+                    onDeleteClick = { albumToDelete ->
+                        selectedAlbum = albumToDelete
                         showDialog = true
                     }
                 )
@@ -110,18 +115,23 @@ fun FavListMedExpScreen(
                 .padding(8.dp)
         ) {
             items(albums) { album ->
-                AlbumCardLand(
+                AlbumCard(
                     album = album,
                     isFavorite = favoriteAlbums.contains(album.id),
-                    onFavoriteClick = {
-                        onFavoriteClick(album)
+                    onFavoriteClick = { albumToToggle ->
+                        if (favoriteAlbums.contains(albumToToggle.id)) {
+                            // Si ya es favorito, mostrar el diálogo de confirmación antes de eliminar
+                            selectedAlbum = albumToToggle
+                            showDialog = true
+                        } else {
+                            // Si no es favorito, añadirlo directamente
+                            onFavoriteClick(albumToToggle)
+                        }
                     },
-                    onDetailsClick = {
-                        navController.navigate(Routes.albumDetailRoute(album.id))
-                    },
+                    onDetailsClick = { navController.navigate(Routes.albumDetailRoute(album.id)) },
                     onClick = { onDetailsClick(album) },
-                    onDeleteClick = {
-                        selectedAlbum = it
+                    onDeleteClick = { albumToDelete ->
+                        selectedAlbum = albumToDelete
                         showDialog = true
                     }
                 )
