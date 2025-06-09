@@ -6,9 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import kotlin.jvm.java
 
-@Database(entities = [AlbumEntity::class], version = 1)
+@Database(entities = [AlbumEntity::class, CommentEntity::class], version = 5)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun albumDao(): AlbumDao
+    abstract fun commentDao(): CommentDao
 
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null
@@ -18,7 +19,10 @@ abstract class AppDatabase : RoomDatabase() {
                 context.applicationContext,
                 AppDatabase::class.java,
                 "albums_db"
-            ).build().also { INSTANCE = it }
+            )
+                .fallbackToDestructiveMigration()
+                .build().also { INSTANCE = it }
         }
     }
 }
+

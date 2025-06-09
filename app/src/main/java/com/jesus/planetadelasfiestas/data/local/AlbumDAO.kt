@@ -23,4 +23,15 @@ interface AlbumDao {
 
     @Delete
     suspend fun delete(album: AlbumEntity)
+
+    @Query("SELECT * FROM albums WHERE id = :albumId LIMIT 1")
+    suspend fun getAlbumById(albumId: Long): AlbumEntity?
+
+    @Query("SELECT EXISTS(SELECT 1 FROM albums WHERE id = :albumId)")
+    fun isFavorite(albumId: Long): Flow<Boolean>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM albums WHERE id = :id)")
+    fun isAlbumFavorite(id: Long): Flow<Boolean>
+
+
 }

@@ -35,6 +35,7 @@ import com.jesus.planetadelasfiestas.data.AppTheme
 import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.model.Routes
 import com.jesus.planetadelasfiestas.ui.components.BottomNavigationBar
+import com.jesus.planetadelasfiestas.ui.screens.AlbumDetailScreen
 import com.jesus.planetadelasfiestas.ui.screens.AlbumListCompactScreen
 import com.jesus.planetadelasfiestas.ui.screens.AlbumListMedExpScreen
 import com.jesus.planetadelasfiestas.ui.screens.DetailItemScreen
@@ -175,54 +176,23 @@ fun PlanetaDeLasFiestasApp(
 
             composable(
                 route = Routes.albumDetailRoute,
-                arguments = listOf(navArgument("albumId") { type = NavType.StringType })
+                arguments = listOf(navArgument("albumId") { type = NavType.LongType })
             ) { backStackEntry ->
 
-                val albumId = backStackEntry.arguments?.getString("albumId") ?: return@composable
+                val albumId = backStackEntry.arguments?.getLong("albumId") ?: return@composable
 
-                val repository = viewModel.repository
-
-                val factory = remember(repository) { AlbumDetailViewModelFactory(repository) }
-
-                val detailViewModel: AlbumDetailViewModel = viewModel(factory = factory)
-
-                val album by detailViewModel.album.collectAsState()
-
-                // Observamos el set de favoritos desde el MainViewModel
-                val favoriteAlbums by viewModel.favoriteAlbums.collectAsState()
-
-                LaunchedEffect(albumId) {
-                    detailViewModel.loadAlbumDetails(albumId)
-                }
-
-                fun handleFavoriteClick(album: Album) {
-                    if (favoriteAlbums.contains(album.id)) {
-                        viewModel.deleteAlbum(album)
-                    } else {
-                        viewModel.saveAlbum(album)
+                AlbumDetailScreen(
+                    albumId = albumId,
+                    mainViewModel = viewModel,
+                    favoriteAlbums = favoriteAlbums,
+                    commentsMap = commentsMap,
+                    addComment = addComment,
+                    onBackClick = { navController.popBackStack() },
+                    onDeleteAlbum = { album ->
+                        onDeleteAlbum(album)
+                        navController.popBackStack()
                     }
-                }
-
-                fun onDeleteAlbum(album: Album) {
-                    viewModel.deleteAlbum(album)
-                    navController.popBackStack() // Volver atrás después de borrar
-                }
-
-                if (album != null) {
-                    DetailItemScreen(
-                        album = album!!,
-                        isFavorite = favoriteAlbums.contains(album!!.id),
-                        onFavoriteClick = { handleFavoriteClick(album!!) },
-                        onDeleteAlbum = { onDeleteAlbum(it) },
-                        onBackClick = { navController.popBackStack() },
-                        comments = commentsMap[album!!.id].orEmpty(),
-                        onAddComment = { comment -> addComment(album!!.id, comment) }
-                    )
-                } else {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                }
+                )
             }
         }
     }

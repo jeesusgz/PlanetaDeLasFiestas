@@ -6,6 +6,7 @@ import com.jesus.planetadelasfiestas.data.dto.SearchAlbumResponse
 import com.jesus.planetadelasfiestas.data.dto.TopAlbumsResponse
 import com.jesus.planetadelasfiestas.data.local.AlbumDao
 import com.jesus.planetadelasfiestas.data.local.AlbumEntity
+import com.jesus.planetadelasfiestas.model.Album
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import retrofit2.http.GET
@@ -17,9 +18,8 @@ interface DeezerApiService {
     suspend fun searchAlbums(@Query("q") query: String): SearchAlbumResponse
 
     @GET("album/{id}")
-    suspend fun getAlbumDetails(@Path("id") albumId: String): AlbumResponse
+    suspend fun getAlbumDetails(@Path("id") id: String): AlbumResponse
     
     @GET("chart/0/albums")
     suspend fun getTopAlbums(): Response<TopAlbumsResponse>
-
 }

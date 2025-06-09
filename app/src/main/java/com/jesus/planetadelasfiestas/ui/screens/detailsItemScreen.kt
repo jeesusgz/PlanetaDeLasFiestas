@@ -56,7 +56,7 @@ fun DetailItemScreen(
     album: Album,
     isFavorite: Boolean,
     onFavoriteClick: (Album) -> Unit,
-    onDeleteAlbum: (Album) -> Unit,   // <-- Nuevo parámetro
+    onDeleteAlbum: (Album) -> Unit,
     onBackClick: () -> Unit,
     comments: List<String>,
     onAddComment: (String) -> Unit,
@@ -65,6 +65,18 @@ fun DetailItemScreen(
     var commentText by remember { mutableStateOf("") }
     var showDeleteDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    // Función auxiliar para evitar strings nulos o vacíos
+    fun safeString(str: String?): String = str?.takeIf { it.isNotBlank() } ?: "Desconocido"
+
+    // Función auxiliar para urls de imagen
+    fun safeImageUrl(url: String?): String = url?.takeIf { it.isNotBlank() }
+        ?: "https://via.placeholder.com/150" // URL genérica para imagen por defecto
+
+    // URL del cover y artista seguros
+    val coverUrl = safeImageUrl(album.coverUrl)
+    val artistPictureUrl = safeImageUrl(album.artistPicture)
+    val albumLink = album.link.takeIf { it.isNotBlank() } ?: "https://www.deezer.com"
 
     Column(
         modifier = Modifier
@@ -87,8 +99,8 @@ fun DetailItemScreen(
         )
 
         AsyncImage(
-            model = album.coverUrl,
-            contentDescription = album.title,
+            model = coverUrl,
+            contentDescription = safeString(album.title),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,7 +110,7 @@ fun DetailItemScreen(
         )
 
         Text(
-            text = album.title,
+            text = safeString(album.title),
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
@@ -110,22 +122,22 @@ fun DetailItemScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = album.artistPicture,
-                contentDescription = album.artistName,
+                model = artistPictureUrl,
+                contentDescription = safeString(album.artistName),
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
                     .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
             )
             Text(
-                text = album.artistName,
+                text = safeString(album.artistName),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
 
         Text(
-            text = "Fecha de lanzamiento: ${album.releaseDate}",
+            text = "Fecha de lanzamiento: ${safeString(album.releaseDate)}",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
         )
@@ -150,7 +162,7 @@ fun DetailItemScreen(
 
         Button(
             onClick = {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(album.link))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(albumLink))
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             },
@@ -226,12 +238,12 @@ fun DetailItemScreen(
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
                 title = { Text("Confirmar borrado") },
-                text = { Text("¿Quieres borrar el álbum \"${album.title}\" de favoritos?") },
+                text = { Text("¿Quieres borrar el álbum \"${safeString(album.title)}\" de favoritos?") },
                 confirmButton = {
                     TextButton(onClick = {
                         onDeleteAlbum(album)
                         showDeleteDialog = false
-                        onBackClick() // Opcional: regresa al listado después de borrar
+                        onBackClick()
                     }) {
                         Text("Borrar")
                     }

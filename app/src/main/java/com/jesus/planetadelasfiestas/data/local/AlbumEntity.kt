@@ -8,24 +8,35 @@ import com.jesus.planetadelasfiestas.model.Album
 data class AlbumEntity(
     @PrimaryKey val id: Long,
     val title: String,
-    val artistId: Long,  // Cambiado a Long para que coincida
     val coverUrl: String,
+    val link: String,
+    val genreId: Int,
+    val releaseDate: String,
+    val recordType: String,
+    val tracklistUrl: String,
+    val explicitLyrics: Boolean,
+    val numberOfTracks: Int,
+    val duration: Int,
+    val artistId: Long,
+    val artistName: String,
+    val artistPicture: String,
+    val fans: Int
 )
 
 fun AlbumEntity.toAlbum() = Album(
     id = id,
     title = title,
     coverUrl = coverUrl,
-    link = "", // Aquí pon un valor por defecto o ajusta según tu esquema
-    genreId = 0,
-    releaseDate = "",
-    recordType = "",
-    tracklistUrl = "",
-    explicitLyrics = false,
-    numberOfTracks = 0,
-    duration = 0,
+    link = link,
+    genreId = genreId,
+    releaseDate = releaseDate,
+    recordType = recordType,
+    tracklistUrl = tracklistUrl,
+    explicitLyrics = explicitLyrics,
+    numberOfTracks = numberOfTracks,
+    duration = duration,
     artistId = artistId,
-    artistName = "",
-    artistPicture = "",
-    fans = 0
+    artistName = artistName,
+    artistPicture = artistPicture,
+    fans = fans
 )

@@ -23,6 +23,19 @@ data class Album(
 fun Album.toEntity() = AlbumEntity(
     id = id,
     title = title,
+    coverUrl = coverUrl,
+    link = link,
+    genreId = genreId,
+    releaseDate = releaseDate,
+    recordType = recordType,
+    tracklistUrl = tracklistUrl,
+    explicitLyrics = explicitLyrics,
+    numberOfTracks = numberOfTracks,
+    duration = duration,
     artistId = artistId,
-    coverUrl = coverUrl
+    artistName = artistName,
+    artistPicture = artistPicture,
+    fans = fans
 )
+
+

@@ -30,7 +30,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _saveResult = MutableLiveData<Boolean?>()
     val saveResult: LiveData<Boolean?> = _saveResult
     private val albumDao = AppDatabase.getInstance(application).albumDao()
-    val repository = DeezerRepository(apiService, albumDao)
+    private val commentDao = AppDatabase.getInstance(application).commentDao()
+
+    val repository: DeezerRepository by lazy {
+        DeezerRepository(apiService, albumDao, commentDao)
+    }
 
     private val _albums = MutableStateFlow<List<Album>>(emptyList())
     val albums: StateFlow<List<Album>> = _albums
@@ -54,8 +58,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         SharingStarted.Eagerly,
         AppTheme.SYSTEM
     )
-
-
 
     private val _savedAlbums = MutableStateFlow<List<AlbumEntity>>(emptyList())
     val savedAlbums: StateFlow<List<AlbumEntity>> = _savedAlbums
@@ -148,6 +150,5 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun resetSaveResult() {
         _saveResult.postValue(null)
     }
-
 
 }
