@@ -13,8 +13,9 @@ import com.jesus.planetadelasfiestas.model.toEntity
 import com.jesus.planetadelasfiestas.network.DeezerApiService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class DeezerRepository(
+class DeezerRepository @Inject constructor(
     private val api: DeezerApiService,
     private val albumDao: AlbumDao,
     private val commentDao: CommentDao
@@ -97,5 +98,10 @@ class DeezerRepository(
             timestamp = System.currentTimeMillis()
         )
         commentDao.insert(commentEntity)
+    }
+
+    fun getFavoritosFlow(): Flow<List<Album>> {
+        return albumDao.getFavoritos()
+            .map { entities -> entities.map { it.toAlbum() } }
     }
 }

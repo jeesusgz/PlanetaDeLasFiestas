@@ -5,14 +5,17 @@ import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
 
 enum class AppTheme { SYSTEM, LIGHT, DARK }
 
-class UserPreferences(private val context: Context) {
+class UserPreferences @Inject constructor(
+    @ApplicationContext private val context: Context) {
 
     companion object {
         val USERNAME_KEY = stringPreferencesKey("username")

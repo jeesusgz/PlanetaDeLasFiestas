@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -30,7 +31,6 @@ import com.example.compose.PlanetaDeLasFiestasTheme
 import com.jesus.planetadelasfiestas.ViewModel.AlbumDetailViewModel
 import com.jesus.planetadelasfiestas.ViewModel.AlbumDetailViewModelFactory
 import com.jesus.planetadelasfiestas.ViewModel.MainViewModel
-import com.jesus.planetadelasfiestas.ViewModel.MainViewModelFactory
 import com.jesus.planetadelasfiestas.data.AppTheme
 import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.model.Routes
@@ -43,7 +43,9 @@ import com.jesus.planetadelasfiestas.ui.screens.FavListCompactScreen
 import com.jesus.planetadelasfiestas.ui.screens.FavListMedExpScreen
 import com.jesus.planetadelasfiestas.ui.screens.ProfileCompactScreen
 import com.jesus.planetadelasfiestas.ui.theme.about.AboutScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,9 +54,7 @@ class MainActivity : ComponentActivity() {
             val context = applicationContext as Application
 
             // Obtén el ViewModel principal usando factory manual
-            val mainViewModel: MainViewModel = viewModel(
-                factory = MainViewModelFactory(context)
-            )
+            val mainViewModel: MainViewModel = hiltViewModel()
 
             val appTheme by mainViewModel.appTheme.collectAsState()
             val isDarkTheme = when (appTheme) {
@@ -178,7 +178,6 @@ fun PlanetaDeLasFiestasApp(
                 route = Routes.albumDetailRoute,
                 arguments = listOf(navArgument("albumId") { type = NavType.LongType })
             ) { backStackEntry ->
-
                 val albumId = backStackEntry.arguments?.getLong("albumId") ?: return@composable
 
                 AlbumDetailScreen(

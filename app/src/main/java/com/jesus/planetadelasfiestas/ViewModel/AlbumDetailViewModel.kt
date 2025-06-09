@@ -6,13 +6,18 @@ import com.jesus.planetadelasfiestas.data.local.toAlbum
 import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.repository.AlbumRepository
 import com.jesus.planetadelasfiestas.repository.DeezerRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AlbumDetailViewModel(private val repository: DeezerRepository) : ViewModel() {
+@HiltViewModel
+class AlbumDetailViewModel @Inject constructor(
+    private val repository: DeezerRepository
+) : ViewModel() {
 
     private val _album = MutableStateFlow<Album?>(null)
     val album: StateFlow<Album?> = _album

@@ -51,7 +51,7 @@ fun AlbumListCompactScreen(
     val albums by viewModel.albums.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    val saveResult by viewModel.saveResult.observeAsState(initial = null)
+    val saveResult by viewModel.saveResult.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(searchText) {
@@ -148,7 +148,7 @@ fun AlbumListMedExpScreen(
 
     val albums by viewModel.albums.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-    val saveResult by viewModel.saveResult.observeAsState(initial = null)
+    val saveResult by viewModel.saveResult.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(searchText) {

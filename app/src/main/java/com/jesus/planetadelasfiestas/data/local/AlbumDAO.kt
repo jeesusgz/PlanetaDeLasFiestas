@@ -34,4 +34,9 @@ interface AlbumDao {
     fun isAlbumFavorite(id: Long): Flow<Boolean>
 
 
+    @Query("SELECT * FROM albums WHERE id IN (:ids)")
+    fun getAlbumsByIds(ids: List<Long>): Flow<List<AlbumEntity>>
+
+    @Query("SELECT * FROM albums WHERE esFavorito = 1") // Agrega columna boolean en tu entidad
+    fun getFavoritos(): Flow<List<AlbumEntity>>
 }

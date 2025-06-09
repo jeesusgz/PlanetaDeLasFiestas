@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jesus.planetadelasfiestas.ViewModel.AlbumDetailViewModel
 import com.jesus.planetadelasfiestas.ViewModel.AlbumDetailViewModelFactory
@@ -21,9 +22,7 @@ fun AlbumDetailScreen(
     onBackClick: () -> Unit,
     onDeleteAlbum: (Album) -> Unit
 ) {
-    val repository = mainViewModel.repository
-    val factory = remember(repository) { AlbumDetailViewModelFactory(repository) }
-    val detailViewModel: AlbumDetailViewModel = viewModel(factory = factory)
+    val detailViewModel: AlbumDetailViewModel = hiltViewModel()
 
     val album by detailViewModel.album.collectAsState()
     val favoriteSet by mainViewModel.favoriteAlbums.collectAsState()
