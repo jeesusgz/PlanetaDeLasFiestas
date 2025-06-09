@@ -40,6 +40,7 @@ fun AlbumListCompactScreen(
     viewModel: MainViewModel,
     favoriteAlbums: Set<Long>,
     onFavoriteClick: (Album) -> Unit,
+    onDeleteAlbum: (Album) -> Unit,    // <-- Nuevo parámetro
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -50,7 +51,6 @@ fun AlbumListCompactScreen(
     val albums by viewModel.albums.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    // Aquí el cambio importante: ponemos initial = null para evitar fallo al recibir null
     val saveResult by viewModel.saveResult.observeAsState(initial = null)
     val context = LocalContext.current
 
@@ -76,7 +76,7 @@ fun AlbumListCompactScreen(
             albumName = selectedAlbum!!.title,
             onCancel = { showDialog = false },
             onConfirm = {
-                onFavoriteClick(selectedAlbum!!)
+                onDeleteAlbum(selectedAlbum!!)   // <-- Aquí llamamos a la función para borrar
                 showDialog = false
             }
         )
@@ -138,6 +138,7 @@ fun AlbumListMedExpScreen(
     viewModel: MainViewModel,
     favoriteAlbums: Set<Long>,
     onFavoriteClick: (Album) -> Unit,
+    onDeleteAlbum: (Album) -> Unit,    // <-- Nuevo parámetro
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -172,7 +173,7 @@ fun AlbumListMedExpScreen(
             albumName = selectedAlbum!!.title,
             onCancel = { showDialog = false },
             onConfirm = {
-                onFavoriteClick(selectedAlbum!!)
+                onDeleteAlbum(selectedAlbum!!)    // <-- Aquí llamamos a la función para borrar
                 showDialog = false
             }
         )

@@ -13,11 +13,15 @@ import kotlinx.coroutines.flow.SharingStarted
 import androidx.lifecycle.viewModelScope
 import com.jesus.planetadelasfiestas.data.AppTheme
 import com.jesus.planetadelasfiestas.data.UserPreferences
+import com.jesus.planetadelasfiestas.data.local.AlbumEntity
 import com.jesus.planetadelasfiestas.data.local.AppDatabase
+import com.jesus.planetadelasfiestas.data.local.toAlbum
 import com.jesus.planetadelasfiestas.model.Album
+import com.jesus.planetadelasfiestas.model.toEntity
 import com.jesus.planetadelasfiestas.network.RetrofitInstance
 import com.jesus.planetadelasfiestas.repository.DeezerRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -35,7 +39,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val isLoading: StateFlow<Boolean> = _isLoading
 
     private val _favoriteAlbums = MutableStateFlow<Set<Long>>(emptySet())
-    val favoriteAlbums: StateFlow<Set<Long>> = _favoriteAlbums
+    val favoriteAlbums: StateFlow<Set<Long>> = repository.getFavoriteAlbumIdsFlow()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            emptySet()
+        )
 
     private val _comments = MutableStateFlow<Map<Long, List<String>>>(emptyMap())
     val comments: StateFlow<Map<Long, List<String>>> = _comments
@@ -46,18 +55,46 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         AppTheme.SYSTEM
     )
 
+
+
+    private val _savedAlbums = MutableStateFlow<List<AlbumEntity>>(emptyList())
+    val savedAlbums: StateFlow<List<AlbumEntity>> = _savedAlbums
+
     init {
         loadTopAlbums()
+        observeSavedAlbums()
+    }
+
+    private fun observeSavedAlbums() {
+        viewModelScope.launch {
+            repository.getAllSavedAlbums().collect { albums ->
+                _savedAlbums.value = albums
+            }
+        }
+    }
+
+    fun deleteSavedAlbum(album: AlbumEntity) {
+        viewModelScope.launch {
+            repository.deleteAlbumFromDb(album)
+        }
     }
 
     fun loadTopAlbums() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
+                // Emitir álbumes guardados localmente primero
+                val saved = repository.getAllSavedAlbums().firstOrNull()
+                if (!saved.isNullOrEmpty()) {
+                    _albums.value = saved.map { it.toAlbum() }
+                }
+
+                // Cargar de API y actualizar la BD local
                 val topAlbums = repository.getTopAlbums()
                 _albums.value = topAlbums
+                repository.saveAlbumsToDb(topAlbums)  // Guardar en Room usando la función que creaste
             } catch (e: Exception) {
-                _albums.value = emptyList()
+                // Si la API falla, se mantiene lo cargado de Room
             } finally {
                 _isLoading.value = false
             }
@@ -97,12 +134,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun saveAlbum(album: Album) {
         viewModelScope.launch {
-            val success = repository.saveAlbumToDb(album)  // Devuelve true si guardó, false si ya existía
-            _saveResult.postValue(success)
+            repository.saveAlbumToDb(album)
+        }
+    }
+
+    fun deleteAlbum(album: Album) {
+        viewModelScope.launch {
+            repository.deleteAlbumFromDb(album.toEntity())
+            // Aquí, tras borrar, si usas un Flow o LiveData, la UI se actualizará automáticamente.
         }
     }
 
     fun resetSaveResult() {
         _saveResult.postValue(null)
     }
+
+
 }

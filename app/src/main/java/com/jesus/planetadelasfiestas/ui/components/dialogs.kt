@@ -8,21 +8,25 @@ import androidx.compose.runtime.Composable
 @Composable
 fun ConfirmDeleteDialog(
     albumName: String,
+    onCancel: () -> Unit,
     onConfirm: () -> Unit,
-    onCancel: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onCancel,
-        title = { Text("Eliminar álbum") },
-        text = { Text("¿Estás seguro de que deseas eliminar \"$albumName\" de tus favoritos?") },
+        title = {
+            Text(text = "Eliminar álbum")
+        },
+        text = {
+            Text(text = "¿Estás seguro de que quieres eliminar \"$albumName\" de favoritos?")
+        },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Eliminar")
+                Text(text = "Eliminar")
             }
         },
         dismissButton = {
             TextButton(onClick = onCancel) {
-                Text("Cancelar")
+                Text(text = "Cancelar")
             }
         }
     )

@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,8 +29,9 @@ import com.jesus.planetadelasfiestas.ui.components.MedHeaderComp
 @Composable
 fun FavListCompactScreen(
     albums: List<Album>,
-    onFavoriteClick: (Album) -> Unit,
     favoriteAlbums: Set<Long>,
+    onFavoriteClick: (Album) -> Unit,
+    onDeleteAlbum: (Album) -> Unit,
     onDetailsClick: (Album) -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
@@ -40,7 +44,7 @@ fun FavListCompactScreen(
             albumName = selectedAlbum!!.title,
             onCancel = { showDialog = false },
             onConfirm = {
-                onFavoriteClick(selectedAlbum!!)
+                onDeleteAlbum(selectedAlbum!!)
                 showDialog = false
             }
         )
@@ -58,19 +62,14 @@ fun FavListCompactScreen(
                     album = album,
                     isFavorite = favoriteAlbums.contains(album.id),
                     onFavoriteClick = {
-                        if (favoriteAlbums.contains(album.id)) {
-                            selectedAlbum = album
-                            showDialog = true
-                        } else {
-                            onFavoriteClick(album)
-                        }
+                        onFavoriteClick(album)
                     },
                     onDetailsClick = {
                         navController.navigate(Routes.albumDetailRoute(album.id))
                     },
                     onClick = { onDetailsClick(album) },
-                    onDeleteClick = { albumToDelete ->
-                        selectedAlbum = albumToDelete
+                    onDeleteClick = {
+                        selectedAlbum = it
                         showDialog = true
                     }
                 )
@@ -82,8 +81,9 @@ fun FavListCompactScreen(
 @Composable
 fun FavListMedExpScreen(
     albums: List<Album>,
-    onFavoriteClick: (Album) -> Unit,
     favoriteAlbums: Set<Long>,
+    onFavoriteClick: (Album) -> Unit,
+    onDeleteAlbum: (Album) -> Unit,
     onDetailsClick: (Album) -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
@@ -96,7 +96,7 @@ fun FavListMedExpScreen(
             albumName = selectedAlbum!!.title,
             onCancel = { showDialog = false },
             onConfirm = {
-                onFavoriteClick(selectedAlbum!!)
+                onDeleteAlbum(selectedAlbum!!)
                 showDialog = false
             }
         )
@@ -114,19 +114,14 @@ fun FavListMedExpScreen(
                     album = album,
                     isFavorite = favoriteAlbums.contains(album.id),
                     onFavoriteClick = {
-                        if (favoriteAlbums.contains(album.id)) {
-                            selectedAlbum = album
-                            showDialog = true
-                        } else {
-                            onFavoriteClick(album)
-                        }
+                        onFavoriteClick(album)
                     },
                     onDetailsClick = {
                         navController.navigate(Routes.albumDetailRoute(album.id))
                     },
                     onClick = { onDetailsClick(album) },
-                    onDeleteClick = { albumToDelete ->
-                        selectedAlbum = albumToDelete
+                    onDeleteClick = {
+                        selectedAlbum = it
                         showDialog = true
                     }
                 )

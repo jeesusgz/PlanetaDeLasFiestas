@@ -77,6 +77,7 @@ class MainActivity : ComponentActivity() {
                     handleFavoriteClick = { mainViewModel.toggleFavorite(it) },
                     commentsMap = mainViewModel.comments.collectAsState().value,
                     addComment = { albumId, comment -> mainViewModel.addComment(albumId, comment) },
+                    onDeleteAlbum = { album -> mainViewModel.deleteAlbum(album) },  // <--- Aquí lo añades
                     windowSize = windowSize
                 )
             }
@@ -86,11 +87,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PlanetaDeLasFiestasApp(
-    viewModel: MainViewModel,      // Recibe el ViewModel principal
+    viewModel: MainViewModel,
     favoriteAlbums: Set<Long>,
     handleFavoriteClick: (Album) -> Unit,
     commentsMap: Map<Long, List<String>>,
     addComment: (Long, String) -> Unit,
+    onDeleteAlbum: (Album) -> Unit,          // <-- función para borrar
     windowSize: WindowWidthSizeClass
 ) {
     val navController = rememberNavController()
@@ -116,6 +118,7 @@ fun PlanetaDeLasFiestasApp(
                         viewModel = viewModel,
                         favoriteAlbums = favoriteAlbums,
                         onFavoriteClick = handleFavoriteClick,
+                        onDeleteAlbum = onDeleteAlbum,          // <--- Añadido aquí
                         navController = navController,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -124,6 +127,7 @@ fun PlanetaDeLasFiestasApp(
                         viewModel = viewModel,
                         favoriteAlbums = favoriteAlbums,
                         onFavoriteClick = handleFavoriteClick,
+                        onDeleteAlbum = onDeleteAlbum,          // <--- Añadido aquí
                         navController = navController,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -131,16 +135,14 @@ fun PlanetaDeLasFiestasApp(
             }
 
             composable(Routes.FavList) {
-                // Observa albums como State para que Compose lo reactive y componga al cambiar
                 val albums by viewModel.albums.collectAsState()
-
-                // Ahora filtramos los favoritos sin acceder a .value directamente
                 val favAlbums = albums.filter { favoriteAlbums.contains(it.id) }
 
                 if (windowSize == WindowWidthSizeClass.Compact) {
                     FavListCompactScreen(
                         albums = favAlbums,
                         onFavoriteClick = handleFavoriteClick,
+                        onDeleteAlbum = onDeleteAlbum,
                         favoriteAlbums = favoriteAlbums,
                         onDetailsClick = { album ->
                             navController.navigate(Routes.albumDetailRoute(album.id))
@@ -152,6 +154,7 @@ fun PlanetaDeLasFiestasApp(
                     FavListMedExpScreen(
                         albums = favAlbums,
                         onFavoriteClick = handleFavoriteClick,
+                        onDeleteAlbum = onDeleteAlbum,
                         favoriteAlbums = favoriteAlbums,
                         onDetailsClick = { album ->
                             navController.navigate(Routes.albumDetailRoute(album.id))
@@ -185,8 +188,24 @@ fun PlanetaDeLasFiestasApp(
 
                 val album by detailViewModel.album.collectAsState()
 
+                // Observamos el set de favoritos desde el MainViewModel
+                val favoriteAlbums by viewModel.favoriteAlbums.collectAsState()
+
                 LaunchedEffect(albumId) {
                     detailViewModel.loadAlbumDetails(albumId)
+                }
+
+                fun handleFavoriteClick(album: Album) {
+                    if (favoriteAlbums.contains(album.id)) {
+                        viewModel.deleteAlbum(album)
+                    } else {
+                        viewModel.saveAlbum(album)
+                    }
+                }
+
+                fun onDeleteAlbum(album: Album) {
+                    viewModel.deleteAlbum(album)
+                    navController.popBackStack() // Volver atrás después de borrar
                 }
 
                 if (album != null) {
@@ -194,6 +213,7 @@ fun PlanetaDeLasFiestasApp(
                         album = album!!,
                         isFavorite = favoriteAlbums.contains(album!!.id),
                         onFavoriteClick = { handleFavoriteClick(album!!) },
+                        onDeleteAlbum = { onDeleteAlbum(it) },
                         onBackClick = { navController.popBackStack() },
                         comments = commentsMap[album!!.id].orEmpty(),
                         onAddComment = { comment -> addComment(album!!.id, comment) }

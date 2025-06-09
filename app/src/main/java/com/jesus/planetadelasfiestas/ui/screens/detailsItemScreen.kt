@@ -19,8 +19,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,12 +56,14 @@ fun DetailItemScreen(
     album: Album,
     isFavorite: Boolean,
     onFavoriteClick: (Album) -> Unit,
+    onDeleteAlbum: (Album) -> Unit,   // <-- Nuevo parámetro
     onBackClick: () -> Unit,
     comments: List<String>,
     onAddComment: (String) -> Unit,
     showComments: Boolean = true
 ) {
     var commentText by remember { mutableStateOf("") }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Column(
@@ -98,7 +103,6 @@ fun DetailItemScreen(
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
-        // Imagen del artista
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -170,7 +174,7 @@ fun DetailItemScreen(
             )
         }
 
-        if (showComments) {
+        if (showComments && isFavorite) {
             Divider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
@@ -210,11 +214,34 @@ fun DetailItemScreen(
                             onAddComment(commentText)
                             commentText = ""
                         }
-                    }
+                    },
+                    enabled = commentText.isNotBlank()
                 ) {
                     Text("Enviar")
                 }
             }
+        }
+
+        if (showDeleteDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                title = { Text("Confirmar borrado") },
+                text = { Text("¿Quieres borrar el álbum \"${album.title}\" de favoritos?") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        onDeleteAlbum(album)
+                        showDeleteDialog = false
+                        onBackClick() // Opcional: regresa al listado después de borrar
+                    }) {
+                        Text("Borrar")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteDialog = false }) {
+                        Text("Cancelar")
+                    }
+                }
+            )
         }
     }
 }
