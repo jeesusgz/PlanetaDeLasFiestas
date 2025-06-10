@@ -114,4 +114,11 @@ class DeezerRepository @Inject constructor(
         return albumDao.getFavoritos()
             .map { entities -> entities.map { it.toAlbum() } }
     }
+
+    suspend fun removeFavorite(album: Album) {
+        val entity = albumDao.getById(album.id)
+        if (entity != null) {
+            albumDao.delete(entity)
+        }
+    }
 }

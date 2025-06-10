@@ -135,7 +135,7 @@ class MainViewModel @Inject constructor(
 
     fun deleteAlbum(album: Album) {
         viewModelScope.launch {
-            repository.deleteAlbumFromDb(album.toEntity())
+            repository.removeFavorite(album)
         }
     }
 
