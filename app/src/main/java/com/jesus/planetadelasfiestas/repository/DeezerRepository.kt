@@ -12,6 +12,7 @@ import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.model.toEntity
 import com.jesus.planetadelasfiestas.network.DeezerApiService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -39,12 +40,10 @@ class DeezerRepository @Inject constructor(
         albumDao.delete(album)
     }
 
-    fun getFavoriteAlbumsFlow(): Flow<List<AlbumEntity>> = albumDao.getAll()
+    fun getFavoriteAlbumsFlow(): Flow<List<AlbumEntity>> = albumDao.getFavoritos()
+    fun getFavoriteAlbumIdsFlow(): Flow<Set<Long>> =
+        getFavoriteAlbumsFlow().map { list -> list.map { it.id }.toSet() }
 
-    fun getFavoriteAlbumIdsFlow(): Flow<Set<Long>> = getFavoriteAlbumsFlow()
-        .map { list -> list.map { it.id }.toSet() }
-
-    // Obtener detalles del álbum desde la API Deezer
     suspend fun getAlbumDetails(id: String): Album? {
         val response = api.getAlbumDetails(id)
         return response.toAlbum()
@@ -59,8 +58,21 @@ class DeezerRepository @Inject constructor(
     }
 
     suspend fun saveAlbumsToDb(albums: List<Album>) {
-        val entities = albums.map { it.toEntity() }
+        val favoritosLocales = albumDao.getAll().first().associateBy { it.id }
+        val entities = albums.map { album ->
+            val local = favoritosLocales[album.id]
+            album.toEntity().copy(esFavorito = local?.esFavorito ?: false)
+        }
         albumDao.insertAll(entities)
+    }
+
+    suspend fun toggleFavorite(album: Album) {
+        val entity = albumDao.getById(album.id)
+        if (entity != null) {
+            albumDao.insert(entity.copy(esFavorito = !entity.esFavorito))
+        } else {
+            albumDao.insert(album.toEntity().copy(esFavorito = true))
+        }
     }
 
     suspend fun getAlbumByIdFromDb(id: Long): AlbumEntity? {
@@ -75,12 +87,10 @@ class DeezerRepository @Inject constructor(
         albumDao.delete(album.toEntity())
     }
 
-    // Comprobar si un álbum está guardado en favoritos (Room)
     fun isFavorite(albumId: String): Flow<Boolean> {
         return albumDao.isAlbumFavorite(albumId.toLong())
     }
 
-    // Ya tienes esta función pero con String para albumId, la adaptamos a Long
     suspend fun getAlbumFromRoom(albumId: Long): Album? {
         val entity = albumDao.getAlbumById(albumId)
         return entity?.toAlbum()

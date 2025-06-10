@@ -24,6 +24,7 @@ import com.jesus.planetadelasfiestas.repository.DeezerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -44,11 +45,7 @@ class MainViewModel @Inject constructor(
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     val favoriteAlbums: StateFlow<Set<Long>> = repository.getFavoriteAlbumIdsFlow()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Lazily,
-            emptySet()
-        )
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptySet())
 
     private val _comments = MutableStateFlow<Map<Long, List<String>>>(emptyMap())
     val comments: StateFlow<Map<Long, List<String>>> = _comments.asStateFlow()
@@ -90,7 +87,8 @@ class MainViewModel @Inject constructor(
                     _albums.value = saved.map { it.toAlbum() }
                 }
                 val topAlbums = repository.getTopAlbums()
-                _albums.value = topAlbums
+                // Aquí cruzas con favoritos antes de mostrar
+                _albums.value = markFavorites(topAlbums)
                 repository.saveAlbumsToDb(topAlbums)
             } catch (e: Exception) {
                 // Si la API falla, se mantiene lo cargado de Room
@@ -105,7 +103,7 @@ class MainViewModel @Inject constructor(
             _isLoading.value = true
             try {
                 val results = repository.searchAlbums(query)
-                _albums.value = results
+                _albums.value = markFavorites(results)
             } catch (e: Exception) {
                 _albums.value = emptyList()
             } finally {
@@ -116,13 +114,7 @@ class MainViewModel @Inject constructor(
 
     fun toggleFavorite(album: Album) {
         viewModelScope.launch {
-            repository.isFavorite(album.id.toString()).firstOrNull()?.let { isFav ->
-                if (isFav) {
-                    repository.deleteAlbumFromDb(album.toEntity())
-                } else {
-                    repository.saveAlbumToDb(album)
-                }
-            }
+            repository.toggleFavorite(album)
         }
     }
 
@@ -136,7 +128,7 @@ class MainViewModel @Inject constructor(
 
     fun saveAlbum(album: Album) {
         viewModelScope.launch {
-            repository.saveAlbumToDb(album)
+            repository.saveAlbumToDb(album.copy(esFavorito = true))
         }
     }
 
@@ -148,5 +140,12 @@ class MainViewModel @Inject constructor(
 
     fun resetSaveResult() {
         _saveResult.value = null
+    }
+
+    private suspend fun markFavorites(albums: List<Album>): List<Album> {
+        val favoriteIds = repository.getFavoriteAlbumIdsFlow().first()
+        return albums.map { album ->
+            album.copy(esFavorito = favoriteIds.contains(album.id))
+        }
     }
 }
