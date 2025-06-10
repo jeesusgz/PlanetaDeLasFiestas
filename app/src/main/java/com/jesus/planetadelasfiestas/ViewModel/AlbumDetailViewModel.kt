@@ -33,15 +33,21 @@ class AlbumDetailViewModel @Inject constructor(
             val albumFromDb = repository.getAlbumFromRoom(albumId)
             if (albumFromDb != null) {
                 _album.value = albumFromDb
-                _isFavorite.value = true
+                _isFavorite.value = albumFromDb.esFavorito
                 _comments.value = loadComments(albumId)
+            } else {
+                _album.value = null
             }
-            // Cargar siempre de API para datos frescos y más completos
-            val albumFromApi = repository.getAlbumDetails(albumId.toString())
-            if (albumFromApi != null) {
-                _album.value = albumFromApi
-                _isFavorite.value = false // o según lógica, si está en BD
-                _comments.value = emptyList()
+
+            // Intenta cargar de la API, pero captura cualquier excepción de red
+            try {
+                val albumFromApi = repository.getAlbumDetails(albumId.toString())
+                if (albumFromApi != null) {
+                    _album.value = albumFromApi.copy(esFavorito = _isFavorite.value)
+                    // Si quieres, puedes guardar en Room aquí
+                }
+            } catch (e: Exception) {
+                // No hay conexión o error de red: ignora y sigue mostrando datos locales
             }
         }
     }
