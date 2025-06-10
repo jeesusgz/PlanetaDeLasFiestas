@@ -63,11 +63,9 @@ fun FavListCompactScreen(
                     isFavorite = favoriteAlbums.contains(album.id),
                     onFavoriteClick = { albumToToggle ->
                         if (favoriteAlbums.contains(albumToToggle.id)) {
-                            // Si ya es favorito, mostrar el diálogo de confirmación antes de eliminar
                             selectedAlbum = albumToToggle
                             showDialog = true
                         } else {
-                            // Si no es favorito, añadirlo directamente
                             onFavoriteClick(albumToToggle)
                         }
                     },
@@ -120,11 +118,9 @@ fun FavListMedExpScreen(
                     isFavorite = favoriteAlbums.contains(album.id),
                     onFavoriteClick = { albumToToggle ->
                         if (favoriteAlbums.contains(albumToToggle.id)) {
-                            // Si ya es favorito, mostrar el diálogo de confirmación antes de eliminar
                             selectedAlbum = albumToToggle
                             showDialog = true
                         } else {
-                            // Si no es favorito, añadirlo directamente
                             onFavoriteClick(albumToToggle)
                         }
                     },

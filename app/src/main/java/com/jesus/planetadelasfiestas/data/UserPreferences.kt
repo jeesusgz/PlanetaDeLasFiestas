@@ -20,7 +20,7 @@ class UserPreferences @Inject constructor(
     companion object {
         val USERNAME_KEY = stringPreferencesKey("username")
         val THEME_KEY = intPreferencesKey("theme_mode")
-        val IS_LOGGED_KEY = booleanPreferencesKey("is_logged")  // <-- aquí
+        val IS_LOGGED_KEY = booleanPreferencesKey("is_logged")
     }
 
     val username: Flow<String> = context.dataStore.data.map { prefs ->
@@ -36,7 +36,7 @@ class UserPreferences @Inject constructor(
     }
 
     val isLogged: Flow<Boolean> = context.dataStore.data.map { prefs ->
-        prefs[IS_LOGGED_KEY] ?: false     // <-- flujo para el estado de login
+        prefs[IS_LOGGED_KEY] ?: false
     }
 
     suspend fun setUsername(name: String) {
@@ -57,7 +57,7 @@ class UserPreferences @Inject constructor(
 
     suspend fun setIsLogged(logged: Boolean) {
         context.dataStore.edit { prefs ->
-            prefs[IS_LOGGED_KEY] = logged   // <-- función para guardar login
+            prefs[IS_LOGGED_KEY] = logged
         }
     }
 }

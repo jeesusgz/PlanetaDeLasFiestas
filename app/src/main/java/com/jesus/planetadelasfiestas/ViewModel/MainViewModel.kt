@@ -80,11 +80,9 @@ class MainViewModel @Inject constructor(
                     _albums.value = saved.map { it.toAlbum() }
                 }
                 val topAlbums = repository.getTopAlbums()
-                // Aquí cruzas con favoritos antes de mostrar
                 _albums.value = markFavorites(topAlbums)
                 repository.saveAlbumsToDb(topAlbums)
             } catch (e: Exception) {
-                // Si la API falla, se mantiene lo cargado de Room
             } finally {
                 _isLoading.value = false
             }

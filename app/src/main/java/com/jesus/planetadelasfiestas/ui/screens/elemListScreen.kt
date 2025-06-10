@@ -40,7 +40,7 @@ fun AlbumListCompactScreen(
     viewModel: MainViewModel,
     favoriteAlbums: Set<Long>,
     onFavoriteClick: (Album) -> Unit,
-    onDeleteAlbum: (Album) -> Unit,    // <-- Nuevo parámetro
+    onDeleteAlbum: (Album) -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -76,7 +76,7 @@ fun AlbumListCompactScreen(
             albumName = selectedAlbum!!.title,
             onCancel = { showDialog = false },
             onConfirm = {
-                onDeleteAlbum(selectedAlbum!!)   // <-- Aquí llamamos a la función para borrar
+                onDeleteAlbum(selectedAlbum!!)
                 showDialog = false
             }
         )
@@ -138,7 +138,7 @@ fun AlbumListMedExpScreen(
     viewModel: MainViewModel,
     favoriteAlbums: Set<Long>,
     onFavoriteClick: (Album) -> Unit,
-    onDeleteAlbum: (Album) -> Unit,    // <-- Nuevo parámetro
+    onDeleteAlbum: (Album) -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -173,7 +173,7 @@ fun AlbumListMedExpScreen(
             albumName = selectedAlbum!!.title,
             onCancel = { showDialog = false },
             onConfirm = {
-                onDeleteAlbum(selectedAlbum!!)    // <-- Aquí llamamos a la función para borrar
+                onDeleteAlbum(selectedAlbum!!)
                 showDialog = false
             }
         )

@@ -21,7 +21,7 @@ data class AlbumEntity(
     val artistName: String,
     val artistPicture: String,
     val fans: Int,
-    val esFavorito: Boolean = false // <-- Añade esta línea
+    val esFavorito: Boolean = false
 )
 
 fun AlbumEntity.toAlbum() = Album(

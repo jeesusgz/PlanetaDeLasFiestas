@@ -16,14 +16,12 @@ import androidx.compose.material.icons.filled.Info
 @Composable
 fun BottomNavigationBar(navController: NavController, currentRoute: String?) {
     NavigationBar {
-        // Definir los items para la barra de navegación
         val items = listOf(
             BottomNavItem("album_list", Icons.Filled.Home, "Álbumes"),
             BottomNavItem("fav_list", Icons.Filled.Favorite, "Favoritos"),
             BottomNavItem("profile", Icons.Filled.AccountCircle, "Perfil"),
             BottomNavItem("about", Icons.Filled.Info, "Acerca")
         )
-        // Iterar sobre los items y crear cada NavigationBarItem
         items.forEach { item ->
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = item.label) },
@@ -32,7 +30,6 @@ fun BottomNavigationBar(navController: NavController, currentRoute: String?) {
                 onClick = {
                     if (currentRoute != item.route) {
                         navController.navigate(item.route) {
-                            // Manejo del comportamiento de la navegación
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
                             }
@@ -46,5 +43,4 @@ fun BottomNavigationBar(navController: NavController, currentRoute: String?) {
     }
 }
 
-// Data class para representar los items de la barra de navegación
 data class BottomNavItem(val route: String, val icon: ImageVector, val label: String)

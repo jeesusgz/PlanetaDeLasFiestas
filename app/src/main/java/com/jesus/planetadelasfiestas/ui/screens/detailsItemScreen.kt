@@ -63,7 +63,7 @@ fun DetailItemScreen(
     onFavoriteClick: (Album) -> Unit,
     onDeleteAlbum: (Album) -> Unit,
     onBackClick: () -> Unit,
-    comments: List<CommentEntity>, // <-- Solo nombre y tipo, sin asignación
+    comments: List<CommentEntity>,
     onAddComment: (String, String) -> Unit,
     showComments: Boolean = true
 ) {

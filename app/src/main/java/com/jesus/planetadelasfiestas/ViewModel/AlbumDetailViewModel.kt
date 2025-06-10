@@ -43,7 +43,6 @@ class AlbumDetailViewModel @Inject constructor(
                     _album.value = albumFromApi.copy(esFavorito = _isFavorite.value)
                 }
             } catch (e: Exception) {
-                // Sin conexión: ignora el error y muestra solo datos locales
             }
         }
     }

@@ -53,7 +53,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = applicationContext as Application
 
-            // Obtén el ViewModel principal usando factory manual
             val mainViewModel: MainViewModel = hiltViewModel()
 
             val appTheme by mainViewModel.appTheme.collectAsState()
@@ -88,7 +87,7 @@ class MainActivity : ComponentActivity() {
         viewModel: MainViewModel,
         favoriteAlbums: Set<Long>,
         handleFavoriteClick: (Album) -> Unit,
-        onDeleteAlbum: (Album) -> Unit,          // <-- función para borrar
+        onDeleteAlbum: (Album) -> Unit,
         windowSize: WindowWidthSizeClass
     ) {
         val navController = rememberNavController()
@@ -114,7 +113,7 @@ class MainActivity : ComponentActivity() {
                             viewModel = viewModel,
                             favoriteAlbums = favoriteAlbums,
                             onFavoriteClick = handleFavoriteClick,
-                            onDeleteAlbum = onDeleteAlbum,          // <--- Añadido aquí
+                            onDeleteAlbum = onDeleteAlbum,
                             navController = navController,
                             modifier = Modifier.fillMaxSize()
                         )
@@ -123,7 +122,7 @@ class MainActivity : ComponentActivity() {
                             viewModel = viewModel,
                             favoriteAlbums = favoriteAlbums,
                             onFavoriteClick = handleFavoriteClick,
-                            onDeleteAlbum = onDeleteAlbum,          // <--- Añadido aquí
+                            onDeleteAlbum = onDeleteAlbum,
                             navController = navController,
                             modifier = Modifier.fillMaxSize()
                         )

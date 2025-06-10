@@ -50,10 +50,9 @@ fun ProfileCompactScreen(modifier: Modifier = Modifier) {
         factory = ProfileViewModelFactory(context.applicationContext as Application)
     )
 
-    // Observamos el estado desde ViewModel
     val profileName by viewModel.username.collectAsState()
     val selectedTheme by viewModel.theme.collectAsState()
-    val isLogged by viewModel.isLogged.collectAsState() // si tienes esta propiedad en el VM
+    val isLogged by viewModel.isLogged.collectAsState()
 
     var tempProfileName by remember { mutableStateOf(profileName) }
 
@@ -62,7 +61,7 @@ fun ProfileCompactScreen(modifier: Modifier = Modifier) {
             title = {
                 Text(
                     text = if (profileName.isBlank())
-                        stringResource(id = R.string.profile_default_title)  // "Perfil de usuario"
+                        stringResource(id = R.string.profile_default_title)
                     else
                         "Perfil de $profileName"
                 )
@@ -107,7 +106,7 @@ fun ProfileCompactScreen(modifier: Modifier = Modifier) {
             StandardButtonComp(
                 text = if (isLogged) stringResource(id = R.string.logout) else stringResource(id = R.string.login),
                 modifier = Modifier.padding(8.dp),
-                onClick = { viewModel.toggleLogin() } // función en VM para cambiar estado
+                onClick = { viewModel.toggleLogin() }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
