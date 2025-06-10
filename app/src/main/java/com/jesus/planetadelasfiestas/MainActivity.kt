@@ -73,125 +73,118 @@ class MainActivity : ComponentActivity() {
 
             PlanetaDeLasFiestasTheme(darkTheme = isDarkTheme, dynamicColor = false) {
                 PlanetaDeLasFiestasApp(
-                    viewModel = mainViewModel, // Pasa el ViewModel principal
+                    viewModel = mainViewModel,
                     favoriteAlbums = mainViewModel.favoriteAlbums.collectAsState().value,
                     handleFavoriteClick = { mainViewModel.toggleFavorite(it) },
-                    commentsMap = mainViewModel.comments.collectAsState().value,
-                    addComment = { albumId, comment -> mainViewModel.addComment(albumId, comment) },
-                    onDeleteAlbum = { album -> mainViewModel.deleteAlbum(album) },  // <--- Aquí lo añades
-                    windowSize = windowSize
+                    onDeleteAlbum = { album -> mainViewModel.deleteAlbum(album) },
+                    windowSize = windowSize,
                 )
             }
         }
     }
-}
 
-@Composable
-fun PlanetaDeLasFiestasApp(
-    viewModel: MainViewModel,
-    favoriteAlbums: Set<Long>,
-    handleFavoriteClick: (Album) -> Unit,
-    commentsMap: Map<Long, List<String>>,
-    addComment: (Long, String) -> Unit,
-    onDeleteAlbum: (Album) -> Unit,          // <-- función para borrar
-    windowSize: WindowWidthSizeClass
-) {
-    val navController = rememberNavController()
+    @Composable
+    fun PlanetaDeLasFiestasApp(
+        viewModel: MainViewModel,
+        favoriteAlbums: Set<Long>,
+        handleFavoriteClick: (Album) -> Unit,
+        onDeleteAlbum: (Album) -> Unit,          // <-- función para borrar
+        windowSize: WindowWidthSizeClass
+    ) {
+        val navController = rememberNavController()
 
-    Scaffold(
-        bottomBar = {
-            BottomNavigationBar(
-                navController = navController,
-                currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-            )
-        }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Routes.AlbumList,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable(Routes.AlbumList) {
-                val albums by viewModel.albums.collectAsState()
-
-                if (windowSize == WindowWidthSizeClass.Compact) {
-                    AlbumListCompactScreen(
-                        viewModel = viewModel,
-                        favoriteAlbums = favoriteAlbums,
-                        onFavoriteClick = handleFavoriteClick,
-                        onDeleteAlbum = onDeleteAlbum,          // <--- Añadido aquí
-                        navController = navController,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                } else {
-                    AlbumListMedExpScreen(
-                        viewModel = viewModel,
-                        favoriteAlbums = favoriteAlbums,
-                        onFavoriteClick = handleFavoriteClick,
-                        onDeleteAlbum = onDeleteAlbum,          // <--- Añadido aquí
-                        navController = navController,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-            }
-
-            composable(Routes.FavList) {
-                val albums by viewModel.albums.collectAsState()
-                val favAlbums by viewModel.favoriteAlbumsList.collectAsState()
-
-                if (windowSize == WindowWidthSizeClass.Compact) {
-                    FavListCompactScreen(
-                        albums = favAlbums,
-                        favoriteAlbums = favAlbums.map { it.id }.toSet(),
-                        onFavoriteClick = handleFavoriteClick,
-                        onDeleteAlbum = onDeleteAlbum,
-                        onDetailsClick = { album ->
-                            navController.navigate(Routes.albumDetailRoute(album.id))
-                        },
-                        navController = navController,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                } else {
-                    FavListMedExpScreen(
-                        albums = favAlbums,
-                        onFavoriteClick = handleFavoriteClick,
-                        onDeleteAlbum = onDeleteAlbum,
-                        favoriteAlbums = favAlbums.map { it.id }.toSet(),
-                        onDetailsClick = { album ->
-                            navController.navigate(Routes.albumDetailRoute(album.id))
-                        },
-                        navController = navController,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-            }
-
-            composable(Routes.Profile) {
-                ProfileCompactScreen()
-            }
-
-            composable(Routes.About) {
-                AboutScreen()
-            }
-
-            composable(
-                route = Routes.albumDetailRoute,
-                arguments = listOf(navArgument("albumId") { type = NavType.LongType })
-            ) { backStackEntry ->
-                val albumId = backStackEntry.arguments?.getLong("albumId") ?: return@composable
-
-                AlbumDetailScreen(
-                    albumId = albumId,
-                    mainViewModel = viewModel,
-                    favoriteAlbums = favoriteAlbums,
-                    commentsMap = commentsMap,
-                    addComment = addComment,
-                    onBackClick = { navController.popBackStack() },
-                    onDeleteAlbum = { album ->
-                        onDeleteAlbum(album)
-                        navController.popBackStack()
-                    }
+        Scaffold(
+            bottomBar = {
+                BottomNavigationBar(
+                    navController = navController,
+                    currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
                 )
+            }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = Routes.AlbumList,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable(Routes.AlbumList) {
+                    val albums by viewModel.albums.collectAsState()
+
+                    if (windowSize == WindowWidthSizeClass.Compact) {
+                        AlbumListCompactScreen(
+                            viewModel = viewModel,
+                            favoriteAlbums = favoriteAlbums,
+                            onFavoriteClick = handleFavoriteClick,
+                            onDeleteAlbum = onDeleteAlbum,          // <--- Añadido aquí
+                            navController = navController,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        AlbumListMedExpScreen(
+                            viewModel = viewModel,
+                            favoriteAlbums = favoriteAlbums,
+                            onFavoriteClick = handleFavoriteClick,
+                            onDeleteAlbum = onDeleteAlbum,          // <--- Añadido aquí
+                            navController = navController,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
+
+                composable(Routes.FavList) {
+                    val albums by viewModel.albums.collectAsState()
+                    val favAlbums by viewModel.favoriteAlbumsList.collectAsState()
+
+                    if (windowSize == WindowWidthSizeClass.Compact) {
+                        FavListCompactScreen(
+                            albums = favAlbums,
+                            favoriteAlbums = favAlbums.map { it.id }.toSet(),
+                            onFavoriteClick = handleFavoriteClick,
+                            onDeleteAlbum = onDeleteAlbum,
+                            onDetailsClick = { album ->
+                                navController.navigate(Routes.albumDetailRoute(album.id))
+                            },
+                            navController = navController,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        FavListMedExpScreen(
+                            albums = favAlbums,
+                            onFavoriteClick = handleFavoriteClick,
+                            onDeleteAlbum = onDeleteAlbum,
+                            favoriteAlbums = favAlbums.map { it.id }.toSet(),
+                            onDetailsClick = { album ->
+                                navController.navigate(Routes.albumDetailRoute(album.id))
+                            },
+                            navController = navController,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
+
+                composable(Routes.Profile) {
+                    ProfileCompactScreen()
+                }
+
+                composable(Routes.About) {
+                    AboutScreen()
+                }
+
+                composable(
+                    route = Routes.albumDetailRoute,
+                    arguments = listOf(navArgument("albumId") { type = NavType.LongType })
+                ) { backStackEntry ->
+                    val albumId = backStackEntry.arguments?.getLong("albumId") ?: return@composable
+
+                    AlbumDetailScreen(
+                        albumId = albumId,
+                        mainViewModel = viewModel,
+                        onBackClick = { navController.popBackStack() },
+                        onDeleteAlbum = { album ->
+                            onDeleteAlbum(album)
+                            navController.popBackStack()
+                        }
+                    )
+                }
             }
         }
     }

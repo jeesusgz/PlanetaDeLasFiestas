@@ -2,17 +2,14 @@ package com.jesus.planetadelasfiestas.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jesus.planetadelasfiestas.data.local.toAlbum
 import com.jesus.planetadelasfiestas.model.Album
-import com.jesus.planetadelasfiestas.repository.AlbumRepository
 import com.jesus.planetadelasfiestas.repository.DeezerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.jesus.planetadelasfiestas.data.local.CommentEntity
 
 @HiltViewModel
 class AlbumDetailViewModel @Inject constructor(
@@ -25,8 +22,8 @@ class AlbumDetailViewModel @Inject constructor(
     private val _isFavorite = MutableStateFlow(false)
     val isFavorite: StateFlow<Boolean> = _isFavorite
 
-    private val _comments = MutableStateFlow<List<String>>(emptyList())
-    val comments: StateFlow<List<String>> = _comments
+    private val _comments = MutableStateFlow<List<CommentEntity>>(emptyList())
+    val comments: StateFlow<List<CommentEntity>> = _comments
 
     fun loadAlbumDetails(albumId: Long) {
         viewModelScope.launch {
@@ -34,26 +31,27 @@ class AlbumDetailViewModel @Inject constructor(
             if (albumFromDb != null) {
                 _album.value = albumFromDb
                 _isFavorite.value = albumFromDb.esFavorito
-                _comments.value = loadComments(albumId)
+                _comments.value = repository.getComments(albumId)
             } else {
                 _album.value = null
+                _isFavorite.value = false
+                _comments.value = emptyList()
             }
-
-            // Intenta cargar de la API, pero captura cualquier excepción de red
             try {
                 val albumFromApi = repository.getAlbumDetails(albumId.toString())
                 if (albumFromApi != null) {
                     _album.value = albumFromApi.copy(esFavorito = _isFavorite.value)
-                    // Si quieres, puedes guardar en Room aquí
                 }
             } catch (e: Exception) {
-                // No hay conexión o error de red: ignora y sigue mostrando datos locales
+                // Sin conexión: ignora el error y muestra solo datos locales
             }
         }
     }
 
-    private suspend fun loadComments(albumId: Long): List<String> {
-        // Implementa si tienes guardado comentarios en DB, si no, devuelve vacío
-        return emptyList()
+    fun addComment(albumId: Long, text: String, author: String) {
+        viewModelScope.launch {
+            repository.addComment(albumId, text, author)
+            _comments.value = repository.getComments(albumId)
+        }
     }
 }

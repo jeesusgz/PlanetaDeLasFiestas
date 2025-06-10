@@ -11,21 +11,19 @@ import com.jesus.planetadelasfiestas.ViewModel.AlbumDetailViewModel
 import com.jesus.planetadelasfiestas.ViewModel.AlbumDetailViewModelFactory
 import com.jesus.planetadelasfiestas.ViewModel.MainViewModel
 import com.jesus.planetadelasfiestas.model.Album
+import com.jesus.planetadelasfiestas.data.local.CommentEntity
 
 @Composable
 fun AlbumDetailScreen(
     albumId: Long,
     mainViewModel: MainViewModel,
-    favoriteAlbums: Set<Long>,
-    commentsMap: Map<Long, List<String>>,
-    addComment: (Long, String) -> Unit,
     onBackClick: () -> Unit,
     onDeleteAlbum: (Album) -> Unit
 ) {
     val detailViewModel: AlbumDetailViewModel = hiltViewModel()
-
     val album by detailViewModel.album.collectAsState()
     val favoriteSet by mainViewModel.favoriteAlbums.collectAsState()
+    val comments by detailViewModel.comments.collectAsState() // <-- Obtén los comentarios aquí
 
     LaunchedEffect(albumId) {
         detailViewModel.loadAlbumDetails(albumId)
@@ -46,8 +44,8 @@ fun AlbumDetailScreen(
             onFavoriteClick = { handleFavoriteClick(album!!) },
             onDeleteAlbum = { onDeleteAlbum(it) },
             onBackClick = onBackClick,
-            comments = commentsMap[album!!.id].orEmpty(),
-            onAddComment = { comment -> addComment(album!!.id, comment) }
+            comments = comments, // <-- Ahora sí, desde el ViewModel de detalle
+            onAddComment = { text, author -> detailViewModel.addComment(album!!.id, text, author) }
         )
     } else {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

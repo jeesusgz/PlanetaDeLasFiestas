@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,8 +47,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.jesus.planetadelasfiestas.ViewModel.AlbumDetailViewModel
+import com.jesus.planetadelasfiestas.data.local.CommentEntity
 import com.jesus.planetadelasfiestas.model.Album
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,25 +63,23 @@ fun DetailItemScreen(
     onFavoriteClick: (Album) -> Unit,
     onDeleteAlbum: (Album) -> Unit,
     onBackClick: () -> Unit,
-    comments: List<String>,
-    onAddComment: (String) -> Unit,
+    comments: List<CommentEntity>, // <-- Solo nombre y tipo, sin asignación
+    onAddComment: (String, String) -> Unit,
     showComments: Boolean = true
 ) {
     var commentText by remember { mutableStateOf("") }
+    var authorText by remember { mutableStateOf("") }
     var showDeleteDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    // Función auxiliar para evitar strings nulos o vacíos
     fun safeString(str: String?): String = str?.takeIf { it.isNotBlank() } ?: "Desconocido"
-
-    // Función auxiliar para urls de imagen
-    fun safeImageUrl(url: String?): String = url?.takeIf { it.isNotBlank() }
-        ?: "https://via.placeholder.com/150" // URL genérica para imagen por defecto
-
-    // URL del cover y artista seguros
+    fun safeImageUrl(url: String?): String = url?.takeIf { it.isNotBlank() } ?: "https://via.placeholder.com/150"
     val coverUrl = safeImageUrl(album.coverUrl)
     val artistPictureUrl = safeImageUrl(album.artistPicture)
     val albumLink = album.link.takeIf { it.isNotBlank() } ?: "https://www.deezer.com"
+
+    val detailViewModel: AlbumDetailViewModel = hiltViewModel()
+    val comments by detailViewModel.comments.collectAsState()
 
     Column(
         modifier = Modifier
@@ -85,12 +88,7 @@ fun DetailItemScreen(
             .padding(bottom = 16.dp)
     ) {
         TopAppBar(
-            title = {
-                Text(
-                    text = "Detalles del Álbum",
-                    style = MaterialTheme.typography.titleLarge
-                )
-            },
+            title = { Text("Detalles del Álbum", style = MaterialTheme.typography.titleLarge) },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
@@ -197,7 +195,7 @@ fun DetailItemScreen(
 
             comments.forEach { comment ->
                 Text(
-                    text = "• $comment",
+                    text = "• ${comment.author}: ${comment.text}",
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp)
                 )
@@ -214,6 +212,15 @@ fun DetailItemScreen(
                     .padding(horizontal = 16.dp)
             )
 
+            OutlinedTextField(
+                value = authorText,
+                onValueChange = { authorText = it },
+                label = { Text("Tu nombre") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
+            )
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -222,12 +229,13 @@ fun DetailItemScreen(
             ) {
                 Button(
                     onClick = {
-                        if (commentText.isNotBlank()) {
-                            onAddComment(commentText)
+                        if (commentText.isNotBlank() && authorText.isNotBlank()) {
+                            onAddComment(commentText, authorText)
                             commentText = ""
+                            authorText = ""
                         }
                     },
-                    enabled = commentText.isNotBlank()
+                    enabled = commentText.isNotBlank() && authorText.isNotBlank()
                 ) {
                     Text("Enviar")
                 }

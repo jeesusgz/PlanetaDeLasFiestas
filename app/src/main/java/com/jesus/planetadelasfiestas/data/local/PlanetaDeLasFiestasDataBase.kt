@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import kotlin.jvm.java
 
-@Database(entities = [AlbumEntity::class, CommentEntity::class], version = 8)
+@Database(entities = [AlbumEntity::class, CommentEntity::class], version = 9)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun albumDao(): AlbumDao
     abstract fun commentDao(): CommentDao

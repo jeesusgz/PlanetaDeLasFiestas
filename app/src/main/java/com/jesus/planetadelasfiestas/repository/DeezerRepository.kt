@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.text.insert
 
 class DeezerRepository @Inject constructor(
     private val api: DeezerApiService,
@@ -96,18 +97,19 @@ class DeezerRepository @Inject constructor(
         return entity?.toAlbum()
     }
 
-    suspend fun getComments(albumId: Long): List<String> {
-        return commentDao.getCommentsByAlbumId(albumId).map { it.text }
+    suspend fun getComments(albumId: Long): List<CommentEntity> {
+        return commentDao.getCommentsByAlbumId(albumId)
     }
 
-    suspend fun addComment(albumId: Long, commentText: String) {
-        val commentEntity = CommentEntity(
-            id = 0, // Auto-generado
-            albumId = albumId,
-            text = commentText,
-            timestamp = System.currentTimeMillis()
+    suspend fun addComment(albumId: Long, text: String, author: String) {
+        commentDao.insert(
+            CommentEntity(
+                albumId = albumId,
+                text = text,
+                author = author,
+                timestamp = System.currentTimeMillis()
+            )
         )
-        commentDao.insert(commentEntity)
     }
 
     fun getFavoritosFlow(): Flow<List<Album>> {

@@ -16,6 +16,7 @@ import com.jesus.planetadelasfiestas.data.AppTheme
 import com.jesus.planetadelasfiestas.data.UserPreferences
 import com.jesus.planetadelasfiestas.data.local.AlbumEntity
 import com.jesus.planetadelasfiestas.data.local.AppDatabase
+import com.jesus.planetadelasfiestas.data.local.CommentEntity
 import com.jesus.planetadelasfiestas.data.local.toAlbum
 import com.jesus.planetadelasfiestas.model.Album
 import com.jesus.planetadelasfiestas.model.toEntity
@@ -48,9 +49,6 @@ class MainViewModel @Inject constructor(
     val favoriteAlbums: StateFlow<Set<Long>> = repository.getFavoriteAlbumIdsFlow()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptySet())
 
-    private val _comments = MutableStateFlow<Map<Long, List<String>>>(emptyMap())
-    val comments: StateFlow<Map<Long, List<String>>> = _comments.asStateFlow()
-
     val appTheme: StateFlow<AppTheme> = prefs.theme.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
@@ -70,12 +68,6 @@ class MainViewModel @Inject constructor(
             repository.getAllSavedAlbums().collect { albums ->
                 _savedAlbums.value = albums
             }
-        }
-    }
-
-    fun deleteSavedAlbum(album: AlbumEntity) {
-        viewModelScope.launch {
-            repository.deleteAlbumFromDb(album)
         }
     }
 
@@ -119,14 +111,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun addComment(albumId: Long, comment: String) {
-        val currentComments = _comments.value.toMutableMap()
-        val updatedList = currentComments[albumId].orEmpty().toMutableList()
-        updatedList.add(comment)
-        currentComments[albumId] = updatedList
-        _comments.value = currentComments
-    }
-
     fun saveAlbum(album: Album) {
         viewModelScope.launch {
             repository.saveAlbumToDb(album.copy(esFavorito = true))
@@ -154,3 +138,4 @@ class MainViewModel @Inject constructor(
         .map { list -> list.map { it.toAlbum() } }
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 }
+
