@@ -137,14 +137,14 @@ fun PlanetaDeLasFiestasApp(
 
             composable(Routes.FavList) {
                 val albums by viewModel.albums.collectAsState()
-                val favAlbums = albums.filter { favoriteAlbums.contains(it.id) }
+                val favAlbums by viewModel.favoriteAlbumsList.collectAsState()
 
                 if (windowSize == WindowWidthSizeClass.Compact) {
                     FavListCompactScreen(
                         albums = favAlbums,
+                        favoriteAlbums = favAlbums.map { it.id }.toSet(),
                         onFavoriteClick = handleFavoriteClick,
                         onDeleteAlbum = onDeleteAlbum,
-                        favoriteAlbums = favoriteAlbums,
                         onDetailsClick = { album ->
                             navController.navigate(Routes.albumDetailRoute(album.id))
                         },
@@ -156,7 +156,7 @@ fun PlanetaDeLasFiestasApp(
                         albums = favAlbums,
                         onFavoriteClick = handleFavoriteClick,
                         onDeleteAlbum = onDeleteAlbum,
-                        favoriteAlbums = favoriteAlbums,
+                        favoriteAlbums = favAlbums.map { it.id }.toSet(),
                         onDetailsClick = { album ->
                             navController.navigate(Routes.albumDetailRoute(album.id))
                         },

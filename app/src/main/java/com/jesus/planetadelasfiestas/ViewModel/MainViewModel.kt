@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -148,4 +149,8 @@ class MainViewModel @Inject constructor(
             album.copy(esFavorito = favoriteIds.contains(album.id))
         }
     }
+
+    val favoriteAlbumsList: StateFlow<List<Album>> = repository.getFavoriteAlbumsFlow()
+        .map { list -> list.map { it.toAlbum() } }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 }
