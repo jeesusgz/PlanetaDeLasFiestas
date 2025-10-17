@@ -1,5 +1,5 @@
 # 🎧 Planeta de las Fiestas
-
+<p align="center">
 <img width="300" height="350" alt="ChatGPT Image 18 oct 2025, 00_46_57" src="https://github.com/user-attachments/assets/cfa9c156-58f0-4ca0-aec7-a350641c6719" />
 
 
