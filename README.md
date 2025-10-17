@@ -1,6 +1,6 @@
 # 🎧 Planeta de las Fiestas
 
-<img width="1024" height="1024" alt="ChatGPT Image 18 oct 2025, 00_46_57" src="https://github.com/user-attachments/assets/cfa9c156-58f0-4ca0-aec7-a350641c6719" />
+<img width="300" height="350" alt="ChatGPT Image 18 oct 2025, 00_46_57" src="https://github.com/user-attachments/assets/cfa9c156-58f0-4ca0-aec7-a350641c6719" />
 
 
 **Planeta de las Fiestas** es una aplicación de música desarrollada en **Kotlin** con **Jetpack Compose** que permite explorar, buscar y gestionar álbumes musicales utilizando la **API de Deezer**.  
